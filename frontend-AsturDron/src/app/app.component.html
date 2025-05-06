@@ -6,18 +6,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AsturDron | LSU</title>
   <link rel="stylesheet" href="app.component.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <div>
-    <h1>AsturDron</h1>
-    <nav>
+  <div id="contenedor">
+    <div id="cabecera">
+      <h1 id="nombre">AsturDron</h1>
+      <div id="login"><a routerLink="/inicio"><i class="fas fa-sign-in-alt"></i></a></div>
+    </div>
+    <nav id="menu">
       <ul>
-        <li><a href="../app/inicio/inicio.component.html">Inicio</a></li>
-        <li><a href="../app/ocio/ocio.component.html">Ocio</a></li>
-        <li><a href="../app/meteorologia/meteorologia.component.html">Meteorología</a></li>
+        <li class="lista">Inicio</li>
+        <li><a href="app.component.html"><i class="fas fa-home"></i></a></li>
+        <li class="lista">Ocio</li>
+        <li><a href="../app/ocio/ocio.component.html"><i class="fas fa-camera"></i></a></li>
+        <li id="meteorologia">Meteorología</li>
+        <li><a href="../app/meteorologia/meteorologia.component.html"><i class="fas fa-cloud"></i></a></li>
       </ul>
     </nav>
+    <section id="contenido">
+      <article class="noticia">
+        <h3>Titulo de la noticia</h3>
+        <p>Descripcion de la primera noticia holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+      </article>
+      <article class="noticia">
+        <h3>Titulo de la segunda noticia</h3>
+        <p>Descripcion de la segunda noticia holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+      </article>
+    </section>
+    <footer id="pie"> © AsturDron - por Llarina Sanz Uría</footer>
   </div>
 </body>
-</html><header>
+</html>
   

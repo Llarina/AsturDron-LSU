@@ -7,6 +7,8 @@ import { InicioComponent } from './inicio/inicio.component';
 import { OcioComponent } from './ocio/ocio.component';
 import { MeteorologiaComponent } from './meteorologia/meteorologia.component';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
