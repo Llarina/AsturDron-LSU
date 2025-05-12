@@ -6,6 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./ocio.component.css']
 })
 export class OcioComponent {
-  title="Ocio";
 
 }

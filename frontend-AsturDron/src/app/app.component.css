@@ -1,130 +1,64 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
-body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url(img/fondo.jfif);
-    background-size: cover;
-    background-repeat: no-repeat;
-    filter: blur(8px);
-    z-index: -1;
-}
-
 #contenedor {
-    display: grid;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-    grid-template-areas: "cabecera cabecera"
-        "contenido menu"
-        "pie pie";
-    grid-template-columns: 80% 20%;
-    gap: 20px;
+    margin: auto;
+    width: 100vw;
+    height: 100vh;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-#cabecera {
-    grid-area: cabecera;
-    margin-right: 20px;
-    background-color: rgb(136, 201, 255);
-    color: white;
+header {
+    margin: auto;
+    margin-bottom: 3%;
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
+    flex-direction: row;
+    width: 90%;
+    height: auto;
+    border-radius: 4px;
+    background-color: rgb(13, 70, 121);
+
+    img {
+        width: 80px;
+        height: auto;
+        border-radius: 4px;
+    }
+
+    h1 {
+        color: white;
+        margin-left: 35%;
+    }
+
 }
 
-#nombre {
-    font-size: 43px;
-    margin-left: 43%;
-}
-
-#login i {
-    margin-right: 20px;
-    background-color: rgb(136, 201, 255);
-    color: white;
-    display: flex;
-    padding: 20px;
-    font-size: 45px;
-}
-
-#menu {
-    font-size: 20px;
-    word-spacing: 20px;
-    margin-right: 20px;
-    grid-area: menu;
-    background-color: rgb(218, 239, 252);
-    color: white;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-}
-
-#meteorologia {
-    margin-left: 3%;
-}
-
-i {
-    font-size: 30px;
-    color: rgb(109, 98, 255);
-}
-
-li {
-    list-style: none;
-    text-decoration: none;
-    margin-bottom: 20px;
-    color: rgb(109, 98, 255);
-}
-
-.lista {
-    margin-left: 25%;
-}
-
-a {
-    margin-left: 30%;
-    text-decoration: none;
-    color: white;
-}
-
-p {
-    padding-right: 20px;
-}
 
 #contenido {
-    grid-area: contenido;
-    float: left;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.noticia {
-    background-color: rgba(225, 247, 248, 0.7);
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    padding: 20px;
-}
-
-#pie {
-    margin-right: 20px;
-    grid-area: pie;
-    clear: both;
-    background-color: rgb(136, 201, 255);
-    color: white;
     display: flex;
-    justify-content: center;
-    padding: 15px;
-    box-sizing: border-box;
+    flex-direction: column;
+    margin: auto;
+    width: 90%;
+
+    .titulo {
+        width: 90%;
+        padding: 2%;
+        color: rgb(13, 70, 121);
+    }
+}
+
+footer {
+    margin: auto;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    height: auto;
+    border-radius: 4px;
+    background-color: rgb(13, 70, 121);
+
+    p {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        color: white;
+
+    }
+
 }

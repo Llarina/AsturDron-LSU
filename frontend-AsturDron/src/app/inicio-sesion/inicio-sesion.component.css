@@ -1,0 +1,40 @@
+#inicio-sesion {
+    margin: auto;
+    border: 1px rgb(233, 231, 231) solid;
+    border-radius: 4px;
+    width: 90%;
+    height: auto;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 3%;
+    }
+
+    h2 {
+        margin: auto;
+        margin-left: 5%;
+        margin-top: 5%;
+        color: rgb(13, 70, 121);
+    }
+
+    button,
+    input {
+        padding: 5px;
+        border-radius: 4px;
+        border: 1px rgb(230, 226, 226) solid;
+    }
+
+    button:hover {
+        transform: scale(1.01);
+        transition: 0.3s;
+    }
+
+    #ini {
+        background-color: rgb(0, 153, 255);
+        color: white;
+        border: 1px rgb(0, 153, 255) solid;
+    }
+
+}

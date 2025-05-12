@@ -1,0 +1,28 @@
+#meteorologia {
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+
+        .dia {
+            border: 1px rgb(230, 226, 226) solid;
+            border-radius: 4px;
+            padding: 1%;
+            margin: auto;
+            width: 22%;
+
+            h3 {
+                color: rgb(13, 70, 121);
+                text-align: center;
+            }
+
+            i {
+                display: flex;
+                color: rgb(13, 70, 121);
+                justify-content: center;
+                margin-bottom: 1%;
+            }
+
+        }
+
+    }
