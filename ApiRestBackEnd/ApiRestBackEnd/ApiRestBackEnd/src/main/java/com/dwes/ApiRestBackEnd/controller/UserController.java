@@ -45,4 +45,9 @@ public class UserController {
         return userService.getRanking();
     }
 
+    @GetMapping("/RankingTop3")
+    public List<RankingRequestDTO> getRankingTop3(){
+        return userService.getRankingTop3();
+    }
+
 }

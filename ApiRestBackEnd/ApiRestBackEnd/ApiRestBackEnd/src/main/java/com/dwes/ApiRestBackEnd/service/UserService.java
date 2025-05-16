@@ -30,6 +30,7 @@ public class UserService {
                 .score(user.getScore())
                 .build();
     }
+
     ArrayList<User> usersRanking = new ArrayList<>();
     public RankingRequestDTO mapToRankingRequestDto(User user){
         return RankingRequestDTO.builder()
@@ -60,8 +61,8 @@ public class UserService {
             if ((Objects.nonNull(user.getPassword()) && !"".equalsIgnoreCase(user.getPassword()))) {
                 userDB.setPassword(user.getPassword());
             }
-            if ((Objects.nonNull(user.getType()) && !"".equalsIgnoreCase(user.getType()))) {
-                userDB.setType(user.getType());
+            if ((Objects.nonNull(user.getLicense()) && !"".equalsIgnoreCase(user.getLicense()))) {
+                userDB.setLicense(user.getLicense());
             }
             if ((Objects.nonNull(user.getUser_email()) && !"".equalsIgnoreCase(user.getUser_email()))) {
                 userDB.setUser_email(user.getUser_email());
@@ -87,6 +88,14 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<RankingRequestDTO> getRanking(){
         List<User> users=(List<User>)userRepository.usersRanking();
+
+        return users.stream().map(this::mapToRankingRequestDto).collect(Collectors.toList());
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<RankingRequestDTO> getRankingTop3(){
+        List<User> users=(List<User>)userRepository.usersRankingTop3();
 
         return users.stream().map(this::mapToRankingRequestDto).collect(Collectors.toList());
 

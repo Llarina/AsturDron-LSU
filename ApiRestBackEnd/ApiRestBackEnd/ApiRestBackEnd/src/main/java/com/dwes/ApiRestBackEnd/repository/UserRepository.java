@@ -1,6 +1,5 @@
 package com.dwes.ApiRestBackEnd.repository;
 
-import com.dwes.ApiRestBackEnd.dto.RankingRequestDTO;
 import com.dwes.ApiRestBackEnd.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,4 +11,8 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User,Long> {
     @Query("select u from User u order by u.score desc")
     List<User> usersRanking();
+
+    @Query("select u from User u order by u.score desc limit 3")
+    List<User> usersRankingTop3();
+
 }
