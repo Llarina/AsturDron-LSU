@@ -17,10 +17,10 @@ public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
-    public Image saveImage(String username, MultipartFile file) throws IOException {
+    public Image saveImage(String username, String url) throws IOException {
         Image image = new Image();
         image.setUsername(username);
-        image.setImagen(file.getBytes());
+        image.setUrl(url);
         return imageRepository.save(image);
     }
 

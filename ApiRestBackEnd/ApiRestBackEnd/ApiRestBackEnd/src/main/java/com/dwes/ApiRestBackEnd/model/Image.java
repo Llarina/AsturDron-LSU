@@ -15,7 +15,7 @@ public class Image {
     private String username;
 
     @Lob
-    private byte[] imagen;
+    private String url;
 
 }
 

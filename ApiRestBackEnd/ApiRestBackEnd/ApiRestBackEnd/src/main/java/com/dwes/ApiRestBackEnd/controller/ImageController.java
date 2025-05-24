@@ -20,8 +20,8 @@ public class ImageController {
     private ImageService imageService;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("username") String username, @RequestParam("file") MultipartFile file) throws IOException {
-        Image image = imageService.saveImage(username, file);
+    public ResponseEntity<String> uploadImage(@RequestParam("username") String username, @RequestParam("url") String url) throws IOException {
+        Image image = imageService.saveImage(username, url);
         return ResponseEntity.ok("Imagen subida con ID: " + image.getId());
     }
 

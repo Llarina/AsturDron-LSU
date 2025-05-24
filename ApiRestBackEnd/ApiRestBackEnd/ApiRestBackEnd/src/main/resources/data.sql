@@ -22,7 +22,7 @@ INSERT INTO weather(week_day,number_day,weather) VALUES ('Martes',20,'windy');
 INSERT INTO weather(week_day,number_day,weather) VALUES ('Miércoles',21,'cloudy');
 INSERT INTO weather(week_day,number_day,weather) VALUES ('Jueves',22,'windy');
 
-INSERT INTO images(username, imagen) VALUES ('usuario_prueba', NULL);
+INSERT INTO images(username, url) VALUES ('usuario_prueba', 'jajjjajaja');
 
 
 
