@@ -1,0 +1,64 @@
+<div id="select">
+    <button [class.active]="activeSection === 'fotos'" (click)="setActiveSection('fotos')">Fotos</button>
+    <button [class.active]="activeSection === 'videos'" (click)="setActiveSection('videos')">Vídeos</button>
+    <button [class.active]="activeSection === 'ranking'" (click)="setActiveSection('ranking')">Ranking</button>
+</div>
+
+<!-- Sección de Fotos -->
+<div id="galeria" *ngIf="activeSection === 'fotos'">
+    <div class="section-header">
+        <h2 class="section-title">Galería de Fotos</h2>
+        <button class="publish-button">Publicar Foto</button>
+    </div>
+    <div class="galeria-container">
+        <div class="imagen" *ngFor="let i of [1,2,3,4,5,6]">
+            <p>username</p>
+            <img src="../../assets/fondo.jfif" alt="imagen">
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Videos -->
+<div id="videos" *ngIf="activeSection === 'videos'">
+    <div class="section-header">
+        <h2 class="section-title">Galería de Vídeos</h2>
+        <button class="publish-button">Publicar Vídeo</button>
+    </div>
+    <div class="videos-container">
+        <div class="video-item" *ngFor="let i of [1,2,3,4,5,6]">
+            <p>username</p>
+            <img src="../../assets/fondo.jfif" alt="video thumbnail">
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Ranking -->
+<div id="ranking" *ngIf="activeSection === 'ranking'">
+    <div class="section-header">
+        <h2 class="section-title">Ranking de Usuarios</h2>
+        <button (click)="toggleRankingView()">
+            {{ showAllRankings ? 'Ver Top 3' : 'Ver Ranking Completo' }}
+        </button>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <table class="ranking-table">
+        <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Usuario</th>
+                <th>Puntuación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let rank of rankings; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ rank.username }}</td>
+                <td>{{ rank.score }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

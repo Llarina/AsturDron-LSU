@@ -1,0 +1,31 @@
+<!-- Contenedor principal de las noticias -->
+<div id="noticias">
+    <!-- Muestra mensaje de error si existe -->
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+    
+    <!-- Muestra mensaje de carga cuando no hay noticias ni errores -->
+    <div *ngIf="!notices.length && !error" class="loading">
+        Cargando noticias...
+    </div>
+
+    <!-- Itera sobre el array de noticias y muestra cada una -->
+    <div class="widget" *ngFor="let notice of notices">
+        <!-- Imagen de la noticia -->
+        <img src="../../assets/fondo.jfif" alt="imagen">
+        <!-- Título de la noticia -->
+        <p>{{ notice.titular }}</p>
+        <!-- Botón para mostrar/ocultar detalles -->
+        <button (click)="toggleDetails(notice)">
+            {{ notice.showDetails ? 'Leer menos' : 'Leer más' }}
+        </button>
+        <!-- Sección de detalles (visible solo cuando showDetails es true) -->
+        <div *ngIf="notice.showDetails" class="notice-details">
+            <!-- Contenido completo de la noticia -->
+            <p>{{ notice.notice }}</p>
+            <!-- Fecha de la noticia -->
+            <p class="date">{{ notice.dateYear }}</p>
+        </div>
+    </div>
+</div>

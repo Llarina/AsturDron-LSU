@@ -1,0 +1,77 @@
+#noticias {
+    display: flex;
+    flex-wrap: nowrap; /* Evita que los elementos se envuelvan */
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+}
+
+.widget {
+    flex: 0 1 250px; /* Reducido el ancho a 250px */
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    min-height: 300px; /* Reducida la altura mínima */
+    margin: 0 10px; /* Añadido margen horizontal */
+}
+
+.widget img {
+    width: 100%;
+    height: 150px; /* Reducida la altura de la imagen */
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.widget p {
+    margin: 10px 0;
+    flex-grow: 1;
+    font-size: 0.9em; /* Texto ligeramente más pequeño */
+}
+
+.widget button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px; /* Botón más pequeño */
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: auto;
+    transition: background-color 0.3s;
+    font-size: 0.9em; /* Texto del botón más pequeño */
+}
+
+.widget button:hover {
+    background-color: #0056b3;
+}
+
+.notice-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 0.9em; /* Texto de detalles más pequeño */
+}
+
+.date {
+    color: #666;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.loading {
+    text-align: center;
+    width: 100%;
+    padding: 20px;
+    color: #666;
+}
