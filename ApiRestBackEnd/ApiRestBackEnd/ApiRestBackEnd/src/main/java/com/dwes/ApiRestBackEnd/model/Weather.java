@@ -9,12 +9,14 @@ import lombok.Data;
 public class Weather {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-    @Column(name = "week_day")
+
+    @Column(nullable = false, length = 15)
     private String weekDay;
-    @Column(name = "number_day")
-    private int day;
-    @Column(name = "weather")
+
+    @Column(nullable = false)
+    private Integer numberDay;
+
+    @Column(nullable = false, length = 50)
     private String weather;
 }

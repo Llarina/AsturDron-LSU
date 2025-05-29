@@ -1,31 +1,43 @@
 <!-- Contenedor principal de las noticias -->
 <div id="noticias">
-    <!-- Muestra mensaje de error si existe -->
-    <div *ngIf="error" class="error-message">
-        {{ error }}
-    </div>
-    
-    <!-- Muestra mensaje de carga cuando no hay noticias ni errores -->
-    <div *ngIf="!notices.length && !error" class="loading">
-        Cargando noticias...
+    <!-- Selector de licencias en una línea -->
+    <div class="license-selector">
+        <label>Filtrar por licencia:</label>
+        <div class="license-buttons">
+            <button 
+                *ngFor="let license of licenses"
+                [class.active]="selectedLicense === license.value"
+                (click)="onLicenseChange(license.value)">
+                {{ license.label }}
+            </button>
+        </div>
     </div>
 
-    <!-- Itera sobre el array de noticias y muestra cada una -->
-    <div class="widget" *ngFor="let notice of notices">
-        <!-- Imagen de la noticia -->
-        <img src="../../assets/fondo.jfif" alt="imagen">
-        <!-- Título de la noticia -->
-        <p>{{ notice.titular }}</p>
-        <!-- Botón para mostrar/ocultar detalles -->
-        <button (click)="toggleDetails(notice)">
-            {{ notice.showDetails ? 'Leer menos' : 'Leer más' }}
-        </button>
-        <!-- Sección de detalles (visible solo cuando showDetails es true) -->
-        <div *ngIf="notice.showDetails" class="notice-details">
-            <!-- Contenido completo de la noticia -->
-            <p>{{ notice.notice }}</p>
-            <!-- Fecha de la noticia -->
-            <p class="date">{{ notice.dateYear }}</p>
+    <!-- Contenedor de mensajes -->
+    <div class="messages-container">
+        <!-- Mensaje de error si existe -->
+        <div *ngIf="error" class="error-message">
+            {{ error }}
+        </div>
+        
+        <!-- Mensaje de carga cuando no hay noticias ni errores -->
+        <div *ngIf="!notices.length && !error" class="loading">
+            Cargando noticias...
+        </div>
+    </div>
+
+    <!-- Contenedor de noticias -->
+    <div class="widgets-container">
+        <div class="widget" *ngFor="let notice of notices">
+            <img [src]="notice.miniature || '../../assets/fondo.jfif'" [alt]="notice.titular">
+            <p class="titular">{{ notice.titular }}</p>
+            <button (click)="toggleDetails(notice)">
+                {{ notice.showDetails ? 'Leer menos' : 'Leer más' }}
+            </button>
+            <div *ngIf="notice.showDetails" class="notice-details">
+                <p>{{ notice.notice }}</p>
+                <p class="date">{{ notice.dateYear }}</p>
+            </div>
         </div>
     </div>
 </div>

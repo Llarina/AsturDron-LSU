@@ -6,6 +6,7 @@ export interface NoticeDTO {
   titular: string;
   notice: string;
   dateYear: string;
+  miniature?: string;
   showDetails?: boolean;
 }
 
@@ -13,14 +14,13 @@ export interface NoticeDTO {
   providedIn: 'root'
 })
 export class NoticeService {
-  private apiUrl = 'http://localhost:8080/Notice'; // Ajustado a la ruta correcta del backend
+  private apiUrl = 'http://localhost:8080/Notice';
 
   constructor(private http: HttpClient) { }
 
   getNotices(license: string): Observable<NoticeDTO[]> {
-    return this.http.get<NoticeDTO[]>(`${this.apiUrl}`, {
-      params: { license } // Añadiendo el parámetro license como query parameter
-    }).pipe(
+    const url = license === 'any' ? this.apiUrl : `${this.apiUrl}/license?license=${license}`;
+    return this.http.get<NoticeDTO[]>(url).pipe(
       map(notices => notices.map(notice => ({
         ...notice,
         showDetails: false

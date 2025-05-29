@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NoticeService, NoticeDTO } from '../services/notice.service';
+import { NoticeService } from '../services/notice.service';
+import { NoticeDTO } from '../services/notice.service';
 
 @Component({
   selector: 'app-noticias',
@@ -12,30 +13,40 @@ import { NoticeService, NoticeDTO } from '../services/notice.service';
 export class NoticiasComponent implements OnInit {
   notices: NoticeDTO[] = [];
   error: string = '';
+  selectedLicense: string = 'a1'; // Valor por defecto en minúsculas
+
+  // Lista de licencias disponibles con valores en minúsculas
+  licenses = [
+    { value: 'a1', label: 'A1' },
+    { value: 'a2', label: 'A2' },
+    { value: 'a3', label: 'A3' },
+    { value: 'any', label: 'Todas' }
+  ];
 
   constructor(private noticeService: NoticeService) {}
 
   ngOnInit() {
-    const license = 'a1';
-    this.loadNotices(license);
+    this.loadNotices();
   }
 
-  toggleDetails(notice: NoticeDTO) {
-    notice.showDetails = !notice.showDetails;
-  }
-
-  private loadNotices(license: string) {
-    this.noticeService.getNotices(license).subscribe({
+  loadNotices() {
+    this.noticeService.getNotices(this.selectedLicense).subscribe({
       next: (data) => {
-        this.notices = data.map(notice => ({
-          ...notice,
-          showDetails: false
-        }));
+        this.notices = data;
       },
       error: (err) => {
         console.error('Error loading notices:', err);
         this.error = 'Error al cargar las noticias';
       }
     });
+  }
+
+  toggleDetails(notice: NoticeDTO) {
+    notice.showDetails = !notice.showDetails;
+  }
+
+  onLicenseChange(license: string) {
+    this.selectedLicense = license;
+    this.loadNotices();
   }
 }

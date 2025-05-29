@@ -3,7 +3,8 @@
     justify-content: center;
     gap: 20px;
     padding: 20px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    min-width: 600px;
 }
 
 .dia {
@@ -12,8 +13,8 @@
     border-radius: 10px;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: calc((100% - 60px) / 4);
     min-width: 120px;
-    max-width: 140px;
     transition: transform 0.3s ease;
 }
 
@@ -92,11 +93,6 @@
 /* Responsive design */
 @media (max-width: 600px) {
     #meteorologia {
-        gap: 15px;
-    }
-    
-    .dia {
-        min-width: 100px;
-        padding: 12px;
+        min-width: 600px;
     }
 }

@@ -26,7 +26,7 @@ public class UserService {
     public UserRequestDTO mapToRequestDto(User user){
         return UserRequestDTO.builder()
                 .username(user.getUsername())
-                .user_email(user.getUser_email())
+                .user_email(user.getUserEmail())
                 .score(user.getScore())
                 .build();
     }
@@ -48,32 +48,6 @@ public class UserService {
     @Transactional
     public User createUser(User user){
         return userRepository.save(user);
-    }
-
-    @Transactional
-    public User updateUser(User user, Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            User userDB = optionalUser.get();
-            if ((Objects.nonNull(user.getUsername()) && !"".equalsIgnoreCase(user.getUsername()))) {
-                userDB.setUsername(user.getUsername());
-            }
-            if ((Objects.nonNull(user.getPassword()) && !"".equalsIgnoreCase(user.getPassword()))) {
-                userDB.setPassword(user.getPassword());
-            }
-            if ((Objects.nonNull(user.getLicense()) && !"".equalsIgnoreCase(user.getLicense()))) {
-                userDB.setLicense(user.getLicense());
-            }
-            if ((Objects.nonNull(user.getUser_email()) && !"".equalsIgnoreCase(user.getUser_email()))) {
-                userDB.setUser_email(user.getUser_email());
-            }
-            if ((Objects.nonNull(user.getScore()))) {
-                userDB.setScore(user.getScore());
-            }
-            return createUser(userDB);
-        } else {
-            throw new IllegalArgumentException("No se ha encontrado el usuario");
-        }
     }
 
     @Transactional

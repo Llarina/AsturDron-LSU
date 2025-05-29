@@ -24,7 +24,7 @@ public class WeatherService {
     public WeatherRequestDTO mapToRequestDTO(Weather weather){
         return WeatherRequestDTO.builder()
                 .weekDay(weather.getWeekDay())
-                .day(weather.getDay())
+                .day(weather.getNumberDay())
                 .weather(weather.getWeather())
                 .build();
     }

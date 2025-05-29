@@ -1,6 +1,6 @@
 package com.dwes.ApiRestBackEnd.controller;
 
-
+import com.dwes.ApiRestBackEnd.dto.ImageRequestDTO;
 import com.dwes.ApiRestBackEnd.model.Image;
 import com.dwes.ApiRestBackEnd.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +14,23 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/images")
+@CrossOrigin(origins = "*")
 public class ImageController {
 
     @Autowired
     private ImageService imageService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("username") String username, @RequestParam("url") String url) throws IOException {
+    @PostMapping("/upload/{username}")
+    public ResponseEntity<String> uploadImage(
+            @PathVariable String username,
+            @RequestParam("url") String url
+    ) {
         Image image = imageService.saveImage(username, url);
         return ResponseEntity.ok("Imagen subida con ID: " + image.getId());
     }
 
-
     @GetMapping("")
-    public List<Image> getAllImages() {
+    public List<ImageRequestDTO> getAllImages() {
          return imageService.getAllImages();
     }
-
 }

@@ -27,9 +27,95 @@
     color: white;
 }
 
-#galeria {
+#select .publish-button {
+    background-color: #28a745;
+    color: white;
+}
+
+#select .publish-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+}
+
+#galeria, #videos {
+    padding: 15px 30px;
+    width: calc(100% - 60px);
     max-width: 1200px;
     margin: 0 auto;
+}
+
+.galeria-container, .videos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.imagen, .video-item {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    width: calc((100% - 60px) / 4);
+}
+
+.imagen p, .video-header {
+    padding: 0;
+    margin: 0 0 8px 0;
+    font-weight: 500;
+    color: #333;
+    border: none;
+    font-size: 0.9em;
+}
+
+.imagen img, .video-thumbnail {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.video-thumbnail {
+    margin: 0;
+    position: relative;
+}
+
+.video-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    margin: 0;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.video-item:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-icon {
+    color: white;
+    font-size: 48px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .section-header {
@@ -41,43 +127,45 @@
     margin-bottom: 20px;
 }
 
-.galeria-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    padding: 0 20px;
-}
-
-.imagen:first-child {
-    grid-column: 1;
-    grid-row: 2;
-}
-
-.imagen {
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.imagen:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-}
-
-.imagen p {
-    padding: 12px 15px;
-    margin: 0;
+.section-title {
+    font-size: 24px;
     font-weight: 500;
-    color: #333;
-    border-bottom: 1px solid #eee;
+    color: rgb(13, 70, 121);
+    margin: 0;
 }
 
-.imagen img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
+.publish-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+}
+
+.publish-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+}
+
+.section-header button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+}
+
+.section-header button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
 }
 
 /* Estilos para el ranking */
@@ -135,116 +223,31 @@
     background-color: #f5f5f5;
 }
 
-.error-message {
-    color: #dc3545;
+.loading-message {
     text-align: center;
-    margin: 20px 0;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(220,53,69,0.2);
+    padding: 20px;
+    color: #666;
+    font-size: 1.1em;
 }
 
-/* Estilos para la sección de videos */
-#videos {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.videos-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    padding: 0 20px;
-}
-
-.video-item {
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.video-item p {
-    padding: 12px 15px;
-    margin: 0;
-    font-weight: 500;
-    color: #333;
-    border-bottom: 1px solid #eee;
-}
-
-.video-item img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-.section-title {
-    font-size: 24px;
-    font-weight: 500;
-    color: rgb(13, 70, 121);
-    margin: 0;
-}
-
-.publish-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    box-shadow: 0 2px 8px rgba(0,123,255,0.2);
-}
-
-.publish-button:hover {
-    background-color: #0056b3;
-    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-}
-
-.section-header button {
-    padding: 8px 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
+.error-message {
+    text-align: center;
+    padding: 15px;
+    margin: 20px;
+    background-color: #ffebee;
+    color: #c62828;
     border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+    border: 1px solid #ffcdd2;
 }
 
-.section-header button:hover {
-    background-color: #0056b3;
-    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-}
-
-/* Estilos específicos para el ranking */
-#ranking .section-header {
-    margin-bottom: 20px;
-    border-bottom: none;
-}
-
-/* Responsive design */
-@media (max-width: 900px) {
-    #galeria {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 600px) {
-    #galeria {
-        grid-template-columns: 1fr;
+/* Media queries para pantallas pequeñas */
+@media (max-width: 992px) {
+    .galeria-container, .videos-container {
+        justify-content: center;
     }
     
-    #select {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    #select button {
-        width: 80%;
+    .imagen, .video-item {
+        width: 100%;
+        max-width: 500px;
     }
 }

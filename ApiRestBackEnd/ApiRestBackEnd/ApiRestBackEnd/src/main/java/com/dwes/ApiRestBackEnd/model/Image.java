@@ -12,10 +12,14 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
 
     @Lob
-    private String url;
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String image;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "username", referencedColumnName = "username", nullable = false)
+    private User user;
 
 }
 

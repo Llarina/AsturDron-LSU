@@ -2,6 +2,7 @@ package com.dwes.ApiRestBackEnd.controller;
 
 import com.dwes.ApiRestBackEnd.dto.RankingRequestDTO;
 import com.dwes.ApiRestBackEnd.dto.UserRequestDTO;
+import com.dwes.ApiRestBackEnd.model.License;
 import com.dwes.ApiRestBackEnd.model.User;
 import com.dwes.ApiRestBackEnd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/User")
+@CrossOrigin(origins = "*")
 public class UserController {
     private final UserService userService;
 
@@ -29,11 +31,16 @@ public class UserController {
         return userService.createUser(user);
     }
 
-    @PutMapping()
-    public User updateUser(User user, Long id){
-        return userService.updateUser(user,id);
+    @PostMapping("/quick")
+    public User quickCreateUser(@RequestParam String username) {
+        User user = new User();
+        user.setUsername(username);
+        user.setUserEmail(username + "@example.com");
+        user.setPassword("12345");
+        user.setLicense(License.a1);
+        user.setScore(0);
+        return userService.createUser(user);
     }
-
 
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id){

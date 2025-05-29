@@ -12,17 +12,31 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-    @Column(name = "username")
+
+    @Column(unique = true, nullable = false, length = 50)
     private String username;
-    @Column(name = "user_email")
-    private String user_email;
-    @Column(name = "password")
+
+    @Column(unique = true, nullable = false, length = 100)
+    private String userEmail;
+
+    @Column(nullable = false, length = 100)
     private String password;
-    @Column(name = "license")
-    private String license;
-    @Column(name = "score")
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private License license;
+
+
     private int score;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Notice> notices;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Image> images;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Video> videos;
 
 }

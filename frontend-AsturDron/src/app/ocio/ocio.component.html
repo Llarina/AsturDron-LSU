@@ -2,45 +2,62 @@
     <button [class.active]="activeSection === 'fotos'" (click)="setActiveSection('fotos')">Fotos</button>
     <button [class.active]="activeSection === 'videos'" (click)="setActiveSection('videos')">Vídeos</button>
     <button [class.active]="activeSection === 'ranking'" (click)="setActiveSection('ranking')">Ranking</button>
+    <button *ngIf="activeSection === 'fotos'" class="publish-button" (click)="openUploadModal()">Publicar Foto</button>
+    <button *ngIf="activeSection === 'videos'" class="publish-button" (click)="openUploadModal()">Publicar Vídeo</button>
+    <button *ngIf="activeSection === 'ranking'" class="publish-button" (click)="toggleRankingView()">
+        {{ showAllRankings ? 'Ver Top 3' : 'Ver Ranking Completo' }}
+    </button>
 </div>
 
 <!-- Sección de Fotos -->
 <div id="galeria" *ngIf="activeSection === 'fotos'">
-    <div class="section-header">
-        <h2 class="section-title">Galería de Fotos</h2>
-        <button class="publish-button">Publicar Foto</button>
+    <!-- Mensaje de error si existe -->
+    <div *ngIf="error" class="error-message">
+        {{ error }}
     </div>
+
+    <!-- Mensaje de carga -->
+    <div *ngIf="!images.length && !error" class="loading-message">
+        Cargando imágenes...
+    </div>
+
     <div class="galeria-container">
-        <div class="imagen" *ngFor="let i of [1,2,3,4,5,6]">
-            <p>username</p>
-            <img src="../../assets/fondo.jfif" alt="imagen">
+        <div class="imagen" *ngFor="let image of images">
+            <p>&#64;{{ image.username }}</p>
+            <img [src]="image.url" [alt]="'Imagen de ' + image.username">
         </div>
     </div>
 </div>
 
 <!-- Sección de Videos -->
 <div id="videos" *ngIf="activeSection === 'videos'">
-    <div class="section-header">
-        <h2 class="section-title">Galería de Vídeos</h2>
-        <button class="publish-button">Publicar Vídeo</button>
+    <!-- Mensaje de error si existe -->
+    <div *ngIf="error" class="error-message">
+        {{ error }}
     </div>
+
+    <!-- Mensaje de carga -->
+    <div *ngIf="!videos.length && !error" class="loading-message">
+        Cargando vídeos...
+    </div>
+
     <div class="videos-container">
-        <div class="video-item" *ngFor="let i of [1,2,3,4,5,6]">
-            <p>username</p>
-            <img src="../../assets/fondo.jfif" alt="video thumbnail">
+        <div class="video-item" *ngFor="let video of videos">
+            <div class="video-header">
+                <p class="username">&#64;{{ video.username }}</p>
+            </div>
+            <div class="video-thumbnail" (click)="openVideo(video.video)">
+                <img [src]="video.miniature" alt="video thumbnail">
+                <div class="play-overlay">
+                    <span class="play-icon">▶</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Sección de Ranking -->
 <div id="ranking" *ngIf="activeSection === 'ranking'">
-    <div class="section-header">
-        <h2 class="section-title">Ranking de Usuarios</h2>
-        <button (click)="toggleRankingView()">
-            {{ showAllRankings ? 'Ver Top 3' : 'Ver Ranking Completo' }}
-        </button>
-    </div>
-
     <div *ngIf="error" class="error-message">
         {{ error }}
     </div>
@@ -62,3 +79,18 @@
         </tbody>
     </table>
 </div>
+
+<!-- Modal de Upload -->
+<app-upload-modal 
+    *ngIf="showUploadModal"
+    [type]="activeSection === 'fotos' ? 'image' : 'video'"
+    (closeModal)="closeUploadModal()"
+    (onSubmit)="handleUpload($event)">
+</app-upload-modal>
+
+<!-- Modal de Video -->
+<app-video-modal 
+    *ngIf="selectedVideo" 
+    [videoUrl]="selectedVideo"
+    (closeModal)="closeVideoModal()">
+</app-video-modal>
