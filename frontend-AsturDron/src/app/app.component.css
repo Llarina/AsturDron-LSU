@@ -95,36 +95,74 @@
     color: rgb(13, 70, 121);
 }
 
-/* Estilos para la barra de navegación de autenticación */
-.auth-nav {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 10px 5%;
-    background-color: rgb(13, 70, 121);
-    margin: 0 auto 20px auto;
+/* Estilos para la sección de autenticación */
+.auth-section {
     width: 90%;
+    margin: 0 auto 3% auto;
+    padding: 20px;
+    background-color: rgb(13, 70, 121);
     border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.auth-nav button {
+/* Estilos para los enlaces de navegación */
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
     padding: 8px 16px;
-    margin-left: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para la sección de autenticación */
+.auth-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.auth-section button {
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
-    background-color: white;
-    color: rgb(13, 70, 121);
-    cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.auth-nav button:hover {
-    background-color: #f0f0f0;
-}
-
-.auth-nav span {
+/* Botón de inicio de sesión (verde) */
+.login-btn {
+    background-color: #28a745;
     color: white;
-    margin-right: 10px;
+}
+
+.login-btn:hover {
+    background-color: #218838;
+}
+
+/* Botón de cerrar sesión (rojo) */
+.logout-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.logout-btn:hover {
+    background-color: #c82333;
+}
+
+.auth-section span {
+    color: white;
+    font-size: 1.1em;
 }
 

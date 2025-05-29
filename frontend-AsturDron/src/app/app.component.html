@@ -2,19 +2,25 @@
 <div id="contenedor">
     <app-header></app-header>
 
-    <nav class="auth-nav">
-        <ng-container *ngIf="!authService.isLoggedIn()">
-            <button routerLink="/login">Iniciar Sesión</button>
-            <button routerLink="/register">Registrarse</button>
-        </ng-container>
-        <ng-container *ngIf="authService.isLoggedIn()">
-            <span>Bienvenido, {{ authService.getCurrentUser()?.username }}</span>
-            <button (click)="authService.logout()">Cerrar Sesión</button>
-        </ng-container>
-    </nav>
-
     <main id="contenido">
-        <router-outlet></router-outlet>
+        <!-- Nuevo componente de autenticación con el estilo original -->
+        <div class="auth-section">
+            <div class="nav-links">
+                <a routerLink="/noticias">Noticias</a>
+                <a routerLink="/ocio">Ocio</a>
+                <a routerLink="/meteorologia">Meteorología</a>
+            </div>
+            <div class="auth-controls">
+                <ng-container *ngIf="!authService.isLoggedIn()">
+                    <button class="login-btn" routerLink="/login">Iniciar Sesión</button>
+                    <button class="login-btn" routerLink="/register">Registrarse</button>
+                </ng-container>
+                <ng-container *ngIf="authService.isLoggedIn()">
+                    <span>Bienvenido, {{ authService.getCurrentUser()?.username }}</span>
+                    <button class="logout-btn" (click)="authService.logout()">Cerrar Sesión</button>
+                </ng-container>
+            </div>
+        </div>
 
         <h2 class="titulo">Últimas noticias del mundo dron</h2>
         <app-noticias></app-noticias>
