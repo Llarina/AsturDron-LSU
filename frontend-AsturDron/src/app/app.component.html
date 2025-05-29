@@ -6,30 +6,36 @@
         <!-- Nuevo componente de autenticación con el estilo original -->
         <div class="auth-section">
             <div class="nav-links">
-                <a routerLink="/noticias">Noticias</a>
-                <a routerLink="/ocio">Ocio</a>
-                <a routerLink="/meteorologia">Meteorología</a>
+                <a [routerLink]="['/noticias']" routerLinkActive="active">Noticias</a>
+                <a [routerLink]="['/ocio']" routerLinkActive="active">Ocio</a>
+                <a [routerLink]="['/meteorologia']" routerLinkActive="active">Meteorología</a>
             </div>
             <div class="auth-controls">
                 <ng-container *ngIf="!authService.isLoggedIn()">
-                    <button class="login-btn" routerLink="/login">Iniciar Sesión</button>
-                    <button class="login-btn" routerLink="/register">Registrarse</button>
+                    <button [routerLink]="['/login']" class="login-btn">Iniciar Sesión</button>
+                    <button [routerLink]="['/register']" class="login-btn">Registrarse</button>
                 </ng-container>
                 <ng-container *ngIf="authService.isLoggedIn()">
                     <span>Bienvenido, {{ authService.getCurrentUser()?.username }}</span>
-                    <button class="logout-btn" (click)="authService.logout()">Cerrar Sesión</button>
+                    <button (click)="logout()" class="logout-btn">Cerrar Sesión</button>
                 </ng-container>
             </div>
         </div>
 
-        <h2 class="titulo">Últimas noticias del mundo dron</h2>
-        <app-noticias></app-noticias>
+        <!-- Router outlet para mostrar el contenido de la ruta actual -->
+        <router-outlet></router-outlet>
 
-        <h2 class="titulo">Galería de vuelos</h2>
-        <app-ocio></app-ocio>
+        <!-- Contenido condicional que solo se muestra en la página principal -->
+        <ng-container *ngIf="router.url === '/' || router.url === '/noticias'">
+            <h2 class="titulo">Últimas noticias del mundo dron</h2>
+            <app-noticias></app-noticias>
 
-        <h2 class="titulo">El tiempo esta semana en asturias</h2>
-        <app-meteorologia></app-meteorologia>
+            <h2 class="titulo">Galería de vuelos</h2>
+            <app-ocio></app-ocio>
+
+            <h2 class="titulo">El tiempo esta semana en asturias</h2>
+            <app-meteorologia></app-meteorologia>
+        </ng-container>
     </main>
 
     <app-footer></app-footer>
