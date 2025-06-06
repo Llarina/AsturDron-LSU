@@ -1,0 +1,589 @@
+<div class="admin-panel">
+  <div class="admin-header">
+    <h1>Panel de Administración</h1>
+    <p>Gestión completa del sistema AsturDron</p>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+  
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Navegación por tabs -->
+  <div class="admin-tabs">
+    <button 
+      [class.active]="activeTab === 'users'" 
+      (click)="setActiveTab('users')"
+      class="tab-button">
+      <i class="icon-users"></i> Usuarios
+    </button>
+    <button 
+      [class.active]="activeTab === 'notices'" 
+      (click)="setActiveTab('notices')"
+      class="tab-button">
+      <i class="icon-notices"></i> Noticias
+    </button>
+    <button 
+      [class.active]="activeTab === 'images'" 
+      (click)="setActiveTab('images')"
+      class="tab-button">
+      <i class="icon-images"></i> Imágenes
+    </button>
+    <button 
+      [class.active]="activeTab === 'videos'" 
+      (click)="setActiveTab('videos')"
+      class="tab-button">
+      <i class="icon-videos"></i> Videos
+    </button>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+
+  <!-- Gestión de Usuarios -->
+  <div *ngIf="activeTab === 'users' && !loading" class="admin-section">
+    <div class="section-header">
+      <h2>Gestión de Usuarios</h2>
+      <p>Total de usuarios: {{ users.length }}</p>
+    </div>
+    
+    <div *ngIf="users.length === 0" class="no-data">
+      No hay usuarios registrados
+    </div>
+
+    <div *ngIf="users.length > 0" class="data-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Licencia</th>
+            <th>Puntuación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td class="username">{{ user.username }}</td>
+            <td>{{ user.userEmail }}</td>
+            <td class="license">{{ user.license?.toUpperCase() || 'N/A' }}</td>
+            <td class="score">{{ user.score }}</td>
+            <td>
+              <button 
+                class="delete-button" 
+                (click)="deleteUser(user.username)"
+                title="Eliminar usuario">
+                🗑️ Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Gestión de Noticias -->
+  <div *ngIf="activeTab === 'notices' && !loading" class="admin-section">
+    <div class="section-header">
+      <h2>Gestión de Noticias</h2>
+      <button class="create-button" (click)="toggleCreateNoticeForm()">
+        {{ showCreateNoticeForm ? 'Cancelar' : '+ Crear Noticia' }}
+      </button>
+    </div>
+
+    <!-- Formulario para crear notice -->
+    <div *ngIf="showCreateNoticeForm" class="create-form">
+      <h3>Nueva Noticia</h3>
+      <form (ngSubmit)="createNotice()">
+        <div class="form-group">
+          <label for="titular">Título:</label>
+          <input 
+            type="text" 
+            id="titular" 
+            [(ngModel)]="newNotice.titular" 
+            name="titular"
+            required
+            placeholder="Título de la noticia">
+        </div>
+        
+        <div class="form-group">
+          <label for="notice">Contenido:</label>
+          <textarea 
+            id="notice" 
+            [(ngModel)]="newNotice.notice" 
+            name="notice"
+            required
+            rows="4"
+            placeholder="Contenido de la noticia"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateYear">Año:</label>
+            <input 
+              type="text" 
+              id="dateYear" 
+              [(ngModel)]="newNotice.dateYear" 
+              name="dateYear"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="license">Licencia:</label>
+            <select 
+              id="license" 
+              [(ngModel)]="newNotice.license" 
+              name="license">
+              <option value="any">Todas</option>
+              <option value="a1">A1</option>
+              <option value="a2">A2</option>
+              <option value="a3">A3</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Método de subida de miniatura -->
+        <div class="form-group">
+          <label>Miniatura (opcional):</label>
+          <div class="upload-method-toggle">
+            <button 
+              type="button"
+              [class.active]="!useFileUploadForCreate"
+              (click)="setCreateUploadMethod(false)">
+              📋 Desde URL
+            </button>
+            <button 
+              type="button"
+              [class.active]="useFileUploadForCreate"
+              (click)="setCreateUploadMethod(true)">
+              📁 Desde archivo
+            </button>
+          </div>
+        </div>
+        
+        <!-- Campo URL -->
+        <div *ngIf="!useFileUploadForCreate" class="form-group">
+          <label for="miniature">URL Miniatura:</label>
+          <input 
+            type="url" 
+            id="miniature" 
+            [(ngModel)]="newNotice.miniature" 
+            name="miniature"
+            placeholder="https://...">
+        </div>
+
+        <!-- Campo archivo -->
+        <div *ngIf="useFileUploadForCreate" class="form-group">
+          <label for="miniatureFile">Archivo de imagen:</label>
+          <input 
+            type="file" 
+            id="miniatureFile"
+            accept="image/*"
+            (change)="onCreateFileSelected($event)"
+            class="file-input">
+          <div *ngIf="selectedCreateFile" class="file-info">
+            <span class="file-name">📎 {{ selectedCreateFile.name }}</span>
+            <span class="file-size">({{ getFileSize(selectedCreateFile.size) }})</span>
+          </div>
+        </div>
+
+        <!-- Previsualización -->
+        <div *ngIf="createPreviewUrl" class="preview-section">
+          <label>Previsualización:</label>
+          <img [src]="createPreviewUrl" alt="Preview" class="image-preview">
+        </div>
+        
+        <button type="submit" class="submit-button" [disabled]="isUploading">
+          {{ isUploading ? 'Creando...' : 'Crear Noticia' }}
+        </button>
+      </form>
+    </div>
+
+    <div *ngIf="notices.length === 0" class="no-data">
+      No hay noticias publicadas
+    </div>
+
+    <div *ngIf="notices.length > 0" class="notices-grid">
+      <div *ngFor="let notice of notices; let i = index" class="notice-card">
+        <div class="notice-header">
+          <h3>{{ notice.titular }}</h3>
+          <div class="notice-actions">
+            <button 
+              class="edit-button small" 
+              (click)="editNotice(notice)"
+              title="Editar noticia">
+              ✏️
+            </button>
+            <button 
+              class="delete-button small" 
+              (click)="deleteNotice(notice, i)"
+              title="Eliminar noticia">
+              🗑️
+            </button>
+          </div>
+        </div>
+        <p class="notice-content">{{ notice.notice }}</p>
+        <div class="notice-meta">
+          <span class="date">{{ notice.dateYear }}</span>
+          <img *ngIf="notice.miniature" [src]="notice.miniature" alt="Miniatura" class="notice-miniature">
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario para editar notice -->
+    <div *ngIf="showEditNoticeForm" class="edit-form">
+      <h3>Editar Noticia</h3>
+      <form (ngSubmit)="updateNotice()">
+        <div class="form-group">
+          <label for="editTitular">Título:</label>
+          <input 
+            type="text" 
+            id="editTitular" 
+            [(ngModel)]="editingNotice.titular" 
+            name="editTitular"
+            required
+            placeholder="Título de la noticia">
+        </div>
+        
+        <div class="form-group">
+          <label for="editNotice">Contenido:</label>
+          <textarea 
+            id="editNotice" 
+            [(ngModel)]="editingNotice.notice" 
+            name="editNotice"
+            required
+            rows="4"
+            placeholder="Contenido de la noticia"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editDateYear">Año:</label>
+            <input 
+              type="text" 
+              id="editDateYear" 
+              [(ngModel)]="editingNotice.dateYear" 
+              name="editDateYear"
+              required>
+          </div>
+          
+          <div class="form-group">
+            <label for="editLicense">Licencia:</label>
+            <select 
+              id="editLicense" 
+              [(ngModel)]="editingNotice.license" 
+              name="editLicense">
+              <option value="any">Todas</option>
+              <option value="a1">A1</option>
+              <option value="a2">A2</option>
+              <option value="a3">A3</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Método de subida de miniatura -->
+        <div class="form-group">
+          <label>Miniatura (opcional):</label>
+          <div class="upload-method-toggle">
+            <button 
+              type="button"
+              [class.active]="!useFileUploadForEdit"
+              (click)="setEditUploadMethod(false)">
+              📋 Desde URL
+            </button>
+            <button 
+              type="button"
+              [class.active]="useFileUploadForEdit"
+              (click)="setEditUploadMethod(true)">
+              📁 Desde archivo
+            </button>
+          </div>
+        </div>
+        
+        <!-- Campo URL -->
+        <div *ngIf="!useFileUploadForEdit" class="form-group">
+          <label for="editMiniature">URL Miniatura:</label>
+          <input 
+            type="url" 
+            id="editMiniature" 
+            [(ngModel)]="editingNotice.miniature" 
+            name="editMiniature"
+            placeholder="https://...">
+        </div>
+
+        <!-- Campo archivo -->
+        <div *ngIf="useFileUploadForEdit" class="form-group">
+          <label for="editMiniatureFile">Archivo de imagen:</label>
+          <input 
+            type="file" 
+            id="editMiniatureFile"
+            accept="image/*"
+            (change)="onEditFileSelected($event)"
+            class="file-input">
+          <div *ngIf="selectedEditFile" class="file-info">
+            <span class="file-name">📎 {{ selectedEditFile.name }}</span>
+            <span class="file-size">({{ getFileSize(selectedEditFile.size) }})</span>
+          </div>
+        </div>
+
+        <!-- Previsualización -->
+        <div *ngIf="editPreviewUrl" class="preview-section">
+          <label>Previsualización:</label>
+          <img [src]="editPreviewUrl" alt="Preview" class="image-preview">
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="submit-button" [disabled]="isUploading">
+            {{ isUploading ? 'Actualizando...' : 'Actualizar Noticia' }}
+          </button>
+          <button type="button" class="cancel-button" (click)="cancelEdit()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Gestión de Imágenes -->
+  <div *ngIf="activeTab === 'images' && !loading" class="admin-section">
+    <div class="section-header">
+      <h2>Gestión de Imágenes</h2>
+      <button class="create-button" (click)="toggleUploadImageForm()">
+        {{ showUploadImageForm ? 'Cancelar' : '+ Subir Imagen' }}
+      </button>
+    </div>
+
+    <!-- Formulario para subir imagen -->
+    <div *ngIf="showUploadImageForm" class="create-form">
+      <h3>Subir Nueva Imagen</h3>
+      <form (ngSubmit)="uploadImageFile()">
+        <div class="form-group">
+          <label for="imageUsername">Usuario:</label>
+          <input 
+            type="text" 
+            id="imageUsername" 
+            [(ngModel)]="newImageUpload.username" 
+            name="imageUsername"
+            required
+            placeholder="Nombre de usuario">
+        </div>
+        
+        <div class="form-group">
+          <label for="imageFile">Archivo de imagen:</label>
+          <input 
+            type="file" 
+            id="imageFile"
+            accept="image/*"
+            (change)="onImageFileSelected($event)"
+            class="file-input"
+            required>
+          <div *ngIf="selectedImageFile" class="file-info">
+            <span class="file-name">📎 {{ selectedImageFile.name }}</span>
+            <span class="file-size">({{ getFileSize(selectedImageFile.size) }})</span>
+          </div>
+        </div>
+
+        <!-- Previsualización -->
+        <div *ngIf="imagePreviewUrl" class="preview-section">
+          <label>Previsualización:</label>
+          <img [src]="imagePreviewUrl" alt="Preview" class="image-preview">
+        </div>
+
+        <!-- Mensajes de error -->
+        <div *ngIf="imageError" class="error-message">
+          {{ imageError }}
+        </div>
+
+        <!-- Indicador de carga -->
+        <div *ngIf="isUploadingImage" class="upload-progress">
+          <div class="spinner"></div>
+          <span>Subiendo imagen...</span>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" class="cancel-button" (click)="cancelImageUpload()">Cancelar</button>
+          <button 
+            type="submit" 
+            class="submit-button" 
+            [disabled]="!isImageUploadValid() || isUploadingImage">
+            {{ isUploadingImage ? 'Subiendo...' : 'Subir Imagen' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="images.length === 0" class="no-data">
+      No hay imágenes publicadas
+    </div>
+
+    <div *ngIf="images.length > 0" class="media-grid">
+      <div *ngFor="let image of images; let i = index" class="media-card">
+        <div class="media-header">
+          <span class="username">{{ '@' }}{{ image.username }}</span>
+          <button 
+            class="delete-button small" 
+            (click)="deleteImage(image, i)"
+            title="Eliminar imagen">
+            🗑️
+          </button>
+        </div>
+        <img [src]="image.url" [alt]="'Imagen de ' + image.username" class="media-preview">
+        
+        <!-- Sistema de puntuación - Solo visible para imágenes que no sean del admin -->
+        <div *ngIf="isScoreable(image.username)" class="scoring-section">
+          <label class="score-label">Puntuación:</label>
+          <div class="score-buttons">
+            <button 
+              *ngFor="let score of getScoreOptions()" 
+              [class]="'score-btn ' + (image.score === score ? 'active' : '')"
+              (click)="scoreImage(image, score)"
+              title="Puntuar con {{ score }} puntos">
+              {{ score }}⭐
+            </button>
+          </div>
+          <div *ngIf="image.score" class="current-score">
+            Puntuado: {{ image.score }}/5 ⭐
+          </div>
+        </div>
+
+        <!-- Mensaje informativo para imágenes del admin -->
+        <div *ngIf="!isScoreable(image.username)" class="admin-content-notice">
+          <p>📋 Contenido administrativo - No puntuable</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gestión de Videos -->
+  <div *ngIf="activeTab === 'videos' && !loading" class="admin-section">
+    <div class="section-header">
+      <h2>Gestión de Videos</h2>
+      <button class="create-button" (click)="toggleUploadVideoForm()">
+        {{ showUploadVideoForm ? 'Cancelar' : '+ Subir Video' }}
+      </button>
+    </div>
+
+    <!-- Formulario para subir video -->
+    <div *ngIf="showUploadVideoForm" class="create-form">
+      <h3>Subir Nuevo Video</h3>
+      <form (ngSubmit)="uploadVideoFile()">
+        <div class="form-group">
+          <label for="videoUsername">Usuario:</label>
+          <input 
+            type="text" 
+            id="videoUsername" 
+            [(ngModel)]="newVideoUpload.username" 
+            name="videoUsername"
+            required
+            placeholder="Nombre de usuario">
+        </div>
+        
+        <div class="form-group">
+          <label for="videoFile">Archivo de video:</label>
+          <input 
+            type="file" 
+            id="videoFile"
+            accept="video/*"
+            (change)="onVideoFileSelected($event)"
+            class="file-input"
+            required>
+          <div *ngIf="selectedVideoFile" class="file-info">
+            <span class="file-name">📎 {{ selectedVideoFile.name }}</span>
+            <span class="file-size">({{ getFileSize(selectedVideoFile.size) }})</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="videoThumbnailFile">Miniatura (imagen):</label>
+          <input 
+            type="file" 
+            id="videoThumbnailFile"
+            accept="image/*"
+            (change)="onVideoThumbnailSelected($event)"
+            class="file-input"
+            required>
+          <div *ngIf="selectedVideoThumbnailFile" class="file-info">
+            <span class="file-name">📎 {{ selectedVideoThumbnailFile.name }}</span>
+            <span class="file-size">({{ getFileSize(selectedVideoThumbnailFile.size) }})</span>
+          </div>
+        </div>
+
+        <!-- Previsualización de miniatura -->
+        <div *ngIf="videoThumbnailPreviewUrl" class="preview-section">
+          <label>Previsualización de miniatura:</label>
+          <img [src]="videoThumbnailPreviewUrl" alt="Preview" class="image-preview">
+        </div>
+
+        <!-- Mensajes de error -->
+        <div *ngIf="videoError" class="error-message">
+          {{ videoError }}
+        </div>
+
+        <!-- Indicador de carga -->
+        <div *ngIf="isUploadingVideo" class="upload-progress">
+          <div class="spinner"></div>
+          <span>Subiendo video...</span>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" class="cancel-button" (click)="cancelVideoUpload()">Cancelar</button>
+          <button 
+            type="submit" 
+            class="submit-button" 
+            [disabled]="!isVideoUploadValid() || isUploadingVideo">
+            {{ isUploadingVideo ? 'Subiendo...' : 'Subir Video' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="videos.length === 0" class="no-data">
+      No hay videos publicados
+    </div>
+
+    <div *ngIf="videos.length > 0" class="media-grid">
+      <div *ngFor="let video of videos; let i = index" class="media-card">
+        <div class="media-header">
+          <span class="username">{{ '@' }}{{ video.username }}</span>
+          <button 
+            class="delete-button small" 
+            (click)="deleteVideo(video, i)"
+            title="Eliminar video">
+            🗑️
+          </button>
+        </div>
+        <div class="video-preview">
+          <img [src]="video.miniature" [alt]="'Video de ' + video.username" class="media-preview">
+          <div class="play-overlay">▶</div>
+        </div>
+        
+        <!-- Sistema de puntuación - Solo visible para videos que no sean del admin -->
+        <div *ngIf="isScoreable(video.username)" class="scoring-section">
+          <label class="score-label">Puntuación:</label>
+          <div class="score-buttons">
+            <button 
+              *ngFor="let score of getScoreOptions()" 
+              [class]="'score-btn ' + (video.score === score ? 'active' : '')"
+              (click)="scoreVideo(video, score)"
+              title="Puntuar con {{ score }} puntos">
+              {{ score }}⭐
+            </button>
+          </div>
+          <div *ngIf="video.score" class="current-score">
+            Puntuado: {{ video.score }}/5 ⭐
+          </div>
+        </div>
+
+        <!-- Mensaje informativo para videos del admin -->
+        <div *ngIf="!isScoreable(video.username)" class="admin-content-notice">
+          <p>📋 Contenido administrativo - No puntuable</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

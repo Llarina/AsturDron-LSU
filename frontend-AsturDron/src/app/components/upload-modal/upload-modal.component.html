@@ -1,0 +1,75 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-button" (click)="close()">×</button>
+    
+    <h2>{{ type === 'image' ? 'Subir Foto' : 'Subir Video' }}</h2>
+    
+    <!-- Mensaje para usuarios no logueados -->
+    <div *ngIf="!currentUser" class="warning-message">
+      <p>⚠️ Debes iniciar sesión para publicar contenido</p>
+    </div>
+    
+    <!-- Campo de usuario (solo lectura si está logueado) -->
+    <div class="form-group">
+      <label>Nombre de usuario:</label>
+      <input 
+        type="text" 
+        [(ngModel)]="username" 
+        placeholder="Introduce tu nombre de usuario"
+        [readonly]="!!currentUser"
+        [class.readonly]="!!currentUser">
+    </div>
+
+    <!-- Campo para subida de archivo principal -->
+    <div class="form-group">
+      <label>{{ type === 'image' ? 'Archivo de imagen' : 'Archivo de video' }}:</label>
+      <input 
+        type="file" 
+        (change)="onFileSelected($event, 'main')"
+        [accept]="type === 'image' ? 'image/*' : 'video/*'"
+        class="file-input">
+      <div *ngIf="selectedFile" class="file-info">
+        <span class="file-name">📎 {{ selectedFile.name }}</span>
+        <span class="file-size">({{ getFileSize(selectedFile.size) }})</span>
+      </div>
+    </div>
+
+    <!-- Campo para miniatura de video -->
+    <div class="form-group" *ngIf="type === 'video'">
+      <label>Archivo de miniatura (imagen):</label>
+      <input 
+        type="file" 
+        (change)="onFileSelected($event, 'miniature')"
+        accept="image/*"
+        class="file-input">
+      <div *ngIf="selectedMiniatureFile" class="file-info">
+        <span class="file-name">📎 {{ selectedMiniatureFile.name }}</span>
+        <span class="file-size">({{ getFileSize(selectedMiniatureFile.size) }})</span>
+      </div>
+    </div>
+
+    <!-- Previsualización de imagen -->
+    <div *ngIf="type === 'image' && previewUrl" class="preview-section">
+      <label>Previsualización:</label>
+      <img [src]="previewUrl" alt="Preview" class="image-preview">
+    </div>
+
+    <!-- Mensajes de error -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="isUploading" class="upload-progress">
+      <div class="spinner"></div>
+      <span>Subiendo archivo...</span>
+    </div>
+
+    <button 
+      class="submit-button" 
+      (click)="submit()" 
+      [disabled]="!isValid || isUploading">
+      {{ getSubmitButtonText() }}
+    </button>
+  </div>
+</div> 

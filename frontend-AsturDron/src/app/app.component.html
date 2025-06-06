@@ -1,0 +1,33 @@
+<!-- Contenedor principal con estructura de layout fijo -->
+<div id="contenedor">
+    <app-header></app-header>
+
+    <main id="contenido">
+        <!-- Barra de navegación y autenticación -->
+        <div class="auth-section">
+            <div class="nav-links">
+                <a [routerLink]="['/home']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+                <a [routerLink]="['/noticias']" routerLinkActive="active">Noticias</a>
+                <a [routerLink]="['/ocio']" routerLinkActive="active">Ocio</a>
+                <a [routerLink]="['/meteorologia']" routerLinkActive="active">Meteorología</a>
+                <!-- Enlace al panel de administración solo visible para el usuario admin -->
+                <a *ngIf="isAdmin()" [routerLink]="['/admin']" routerLinkActive="active" class="admin-link">Panel Admin</a>
+            </div>
+            <div class="auth-controls">
+                <ng-container *ngIf="!authService.isLoggedIn()">
+                    <button [routerLink]="['/login']" class="login-btn">Iniciar Sesión</button>
+                    <button [routerLink]="['/register']" class="login-btn">Registrarse</button>
+                </ng-container>
+                <ng-container *ngIf="authService.isLoggedIn()">
+                    <span>Bienvenido, {{ authService.getCurrentUser()?.username }}</span>
+                    <button (click)="logout()" class="logout-btn">Cerrar Sesión</button>
+                </ng-container>
+            </div>
+        </div>
+
+        <!-- Contenido dinámico -->
+        <router-outlet></router-outlet>
+    </main>
+
+    <app-footer></app-footer>
+</div>

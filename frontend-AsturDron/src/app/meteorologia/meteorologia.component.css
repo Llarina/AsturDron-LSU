@@ -1,0 +1,486 @@
+/* Contenedor principal de meteorología */
+#meteorologia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    min-height: 300px;
+}
+
+/* Contenedor de mensajes */
+.messages-container {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+/* Contenedor de tarjetas del clima */
+.weather-cards {
+    display: grid;
+    /* Configuración más inteligente para las tarjetas del tiempo */
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    width: 100%;
+    max-width: 800px;
+    padding: 0 10px;
+}
+
+/* Para pantallas que pueden mostrar 4 tarjetas en una línea */
+@media (min-width: 800px) {
+    .weather-cards {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 800px;
+    }
+}
+
+/* Para pantallas medianas donde caben 2 tarjetas por línea */
+@media (min-width: 600px) and (max-width: 799px) {
+    .weather-cards {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 600px;
+    }
+}
+
+/* Para pantallas pequeñas - 2 tarjetas por línea más compactas */
+@media (max-width: 599px) {
+    .weather-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-width: 400px;
+    }
+}
+
+/* Tarjeta individual del día */
+.dia {
+    background-color: white;
+    padding: 15px 10px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+}
+
+.dia:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Header del día */
+.day-header {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.day-header h3 {
+    margin: 0 0 4px 0;
+    color: rgb(13, 70, 121);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.day-number {
+    display: block;
+    color: #666;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+/* Icono del clima */
+.dia i {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #007bff;
+    transition: transform 0.3s ease;
+}
+
+.dia:hover i {
+    transform: scale(1.1);
+}
+
+/* Tipo de clima */
+.weather-type {
+    margin: 6px 0 0 0;
+    color: #666;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Mensajes de error */
+.error-message {
+    width: 100%;
+    text-align: center;
+    color: #dc3545;
+    padding: 15px 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.2);
+    margin-bottom: 20px;
+    border-left: 4px solid #dc3545;
+    font-size: 1rem;
+}
+
+/* Mensajes de advertencia */
+.warning-message {
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(220,53,69,0.3);
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* Media Queries para Responsividad */
+
+/* Móviles pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    #meteorologia {
+        padding: 10px;
+        min-height: 250px;
+    }
+
+    .messages-container {
+        padding: 0 5px;
+        margin-bottom: 15px;
+    }
+
+    .weather-cards {
+        gap: 8px;
+        padding: 0 5px;
+        max-width: 350px;
+    }
+
+    .dia {
+        padding: 10px 6px;
+        border-radius: 8px;
+        min-height: 110px;
+    }
+
+    .day-header {
+        margin-bottom: 6px;
+    }
+
+    .day-header h3 {
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+    }
+
+    .day-number {
+        font-size: 1rem;
+    }
+
+    .dia i {
+        font-size: 1.3rem;
+        margin-bottom: 5px;
+    }
+
+    .weather-type {
+        font-size: 0.6rem;
+        margin-top: 3px;
+    }
+
+    .error-message {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+
+    .warning-message {
+        padding: 15px;
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+}
+
+/* Móviles medianos (481px - 599px) */
+@media (min-width: 481px) and (max-width: 599px) {
+    #meteorologia {
+        padding: 12px;
+    }
+
+    .messages-container {
+        padding: 0 8px;
+    }
+
+    .weather-cards {
+        gap: 12px;
+        padding: 0 8px;
+        max-width: 400px;
+    }
+
+    .dia {
+        padding: 14px 10px;
+        min-height: 130px;
+    }
+
+    .day-header h3 {
+        font-size: 0.85rem;
+    }
+
+    .day-number {
+        font-size: 1.2rem;
+    }
+
+    .dia i {
+        font-size: 1.8rem;
+        margin-bottom: 7px;
+    }
+
+    .weather-type {
+        font-size: 0.7rem;
+        margin-top: 5px;
+    }
+
+    .error-message,
+    .warning-message {
+        padding: 15px 18px;
+    }
+}
+
+/* Tablets (600px - 799px) - 2 tarjetas por línea */
+@media (min-width: 600px) and (max-width: 799px) {
+    #meteorologia {
+        padding: 18px;
+    }
+
+    .messages-container {
+        margin-bottom: 25px;
+    }
+
+    .weather-cards {
+        /* Ya se configuró arriba con repeat(2, 1fr) */
+        gap: 18px;
+        max-width: 600px;
+    }
+
+    .dia {
+        padding: 18px 15px;
+        border-radius: 12px;
+        min-height: 150px;
+    }
+
+    .day-header {
+        margin-bottom: 12px;
+    }
+
+    .day-header h3 {
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+
+    .day-number {
+        font-size: 1.4rem;
+    }
+
+    .dia i {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .weather-type {
+        font-size: 0.8rem;
+        margin-top: 8px;
+    }
+
+    .error-message,
+    .warning-message {
+        padding: 18px 25px;
+        margin-bottom: 25px;
+    }
+
+    .warning-message {
+        font-size: 1.15rem;
+    }
+}
+
+/* Escritorio (800px - 1399px) - 4 tarjetas en una línea */
+@media (min-width: 800px) and (max-width: 1399px) {
+    #meteorologia {
+        padding: 20px;
+    }
+
+    .weather-cards {
+        /* Ya se configuró arriba con repeat(4, 1fr) */
+        gap: 20px;
+        max-width: 800px;
+    }
+
+    .dia {
+        padding: 20px 15px;
+        min-height: 160px;
+    }
+
+    .day-header {
+        margin-bottom: 14px;
+    }
+
+    .day-header h3 {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+
+    .day-number {
+        font-size: 1.5rem;
+    }
+
+    .dia i {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+
+    .weather-type {
+        font-size: 0.85rem;
+        margin-top: 8px;
+    }
+
+    .error-message,
+    .warning-message {
+        padding: 20px 30px;
+        margin-bottom: 30px;
+    }
+
+    .warning-message {
+        font-size: 1.2rem;
+    }
+}
+
+/* Pantallas muy grandes (1400px en adelante) - 4 tarjetas en una línea */
+@media (min-width: 1400px) {
+    #meteorologia {
+        padding: 25px;
+        max-width: 1400px;
+    }
+
+    .weather-cards {
+        /* Ya se configuró arriba con repeat(4, 1fr) pero con más espacio */
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        max-width: 900px;
+    }
+
+    .dia {
+        padding: 25px 18px;
+        min-height: 180px;
+    }
+
+    .day-header {
+        margin-bottom: 16px;
+    }
+
+    .day-header h3 {
+        font-size: 1.2rem;
+        margin-bottom: 6px;
+    }
+
+    .day-number {
+        font-size: 1.6rem;
+    }
+
+    .dia i {
+        font-size: 3rem;
+        margin-bottom: 14px;
+    }
+
+    .weather-type {
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .error-message,
+    .warning-message {
+        padding: 25px 35px;
+        margin-bottom: 35px;
+        font-size: 1.1rem;
+    }
+
+    .warning-message {
+        font-size: 1.3rem;
+    }
+}
+
+/* Orientación landscape en móviles - optimizar para pantalla horizontal */
+@media (max-width: 767px) and (orientation: landscape) {
+    #meteorologia {
+        padding: 8px;
+        min-height: 200px;
+    }
+
+    .weather-cards {
+        /* En landscape móvil mantenemos 4 tarjetas en línea si caben */
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        max-width: 600px;
+    }
+
+    .dia {
+        padding: 8px 6px;
+        min-height: 100px;
+    }
+
+    .day-header {
+        margin-bottom: 4px;
+    }
+
+    .day-header h3 {
+        font-size: 0.7rem;
+        margin-bottom: 1px;
+    }
+
+    .day-number {
+        font-size: 0.9rem;
+    }
+
+    .dia i {
+        font-size: 1.2rem;
+        margin-bottom: 4px;
+    }
+
+    .weather-type {
+        font-size: 0.6rem;
+        margin-top: 2px;
+    }
+
+    .error-message,
+    .warning-message {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+}
+
+/* Ajustes para pantallas extremadamente pequeñas */
+@media (max-width: 300px) {
+    .weather-cards {
+        grid-template-columns: 1fr !important;
+        max-width: 200px;
+    }
+
+    .dia {
+        max-width: 180px;
+        margin: 0 auto;
+        padding: 8px;
+        min-height: 100px;
+    }
+}

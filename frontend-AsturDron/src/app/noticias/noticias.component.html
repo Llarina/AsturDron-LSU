@@ -1,0 +1,166 @@
+<!-- Contenedor principal de las noticias -->
+<div id="noticias">
+    <!-- Selector de licencias en una línea -->
+    <div class="license-selector">
+        <label>Filtrar por licencia:</label>
+        <div class="license-buttons">
+            <button 
+                *ngFor="let license of licenses"
+                [class.active]="selectedLicense === license.value"
+                (click)="onLicenseChange(license.value)">
+                {{ license.label }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenedor de mensajes -->
+    <div class="messages-container">
+        <!-- Mensaje de éxito -->
+        <div *ngIf="successMessage" class="success-message">
+            {{ successMessage }}
+        </div>
+        
+        <!-- Mensaje de error si existe -->
+        <div *ngIf="error" class="error-message">
+            {{ error }}
+        </div>
+        
+        <!-- Mensaje de carga solo cuando realmente está cargando -->
+        <div *ngIf="isLoading" class="loading">
+            Cargando noticias...
+        </div>
+    </div>
+
+    <!-- Información de paginación superior -->
+    <div *ngIf="allNotices.length > 0" class="pagination-info">
+        <p>Mostrando {{ getPageInfo().startItem }} - {{ getPageInfo().endItem }} de {{ getPageInfo().totalItems }} noticias</p>
+    </div>
+
+    <!-- Formulario para editar notice (solo para admin) -->
+    <div *ngIf="showEditNoticeForm && isAdmin()" class="edit-form">
+        <h3>Editar Noticia</h3>
+        <form (ngSubmit)="updateNotice()">
+            <div class="form-group">
+                <label for="editTitular">Título:</label>
+                <input 
+                    type="text" 
+                    id="editTitular" 
+                    [(ngModel)]="editingNotice.titular" 
+                    name="editTitular"
+                    required
+                    placeholder="Título de la noticia">
+            </div>
+            
+            <div class="form-group">
+                <label for="editNotice">Contenido:</label>
+                <textarea 
+                    id="editNotice" 
+                    [(ngModel)]="editingNotice.notice" 
+                    name="editNotice"
+                    required
+                    rows="4"
+                    placeholder="Contenido de la noticia"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editDateYear">Año:</label>
+                    <input 
+                        type="text" 
+                        id="editDateYear" 
+                        [(ngModel)]="editingNotice.dateYear" 
+                        name="editDateYear"
+                        required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editLicense">Licencia:</label>
+                    <select 
+                        id="editLicense" 
+                        [(ngModel)]="editingNotice.license" 
+                        name="editLicense">
+                        <option value="any">Todas</option>
+                        <option value="a1">A1</option>
+                        <option value="a2">A2</option>
+                        <option value="a3">A3</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="editMiniature">URL Miniatura (opcional):</label>
+                <input 
+                    type="url" 
+                    id="editMiniature" 
+                    [(ngModel)]="editingNotice.miniature" 
+                    name="editMiniature"
+                    placeholder="https://...">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-button">Actualizar Noticia</button>
+                <button type="button" class="cancel-button" (click)="cancelEdit()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Contenedor de noticias -->
+    <div class="widgets-container">
+        <div class="widget" *ngFor="let notice of notices">
+            <img [src]="notice.miniature || '../../assets/fondo.jfif'" [alt]="notice.titular">
+            
+            <p class="titular">{{ notice.titular }}</p>
+            <button (click)="toggleDetails(notice)">
+                {{ notice.showDetails ? 'Leer menos' : 'Leer más' }}
+            </button>
+            <div *ngIf="notice.showDetails" class="notice-details">
+                <p>{{ notice.notice }}</p>
+                <p class="date">{{ notice.dateYear }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de paginación -->
+    <div *ngIf="totalPages > 1" class="pagination-controls">
+        <div class="pagination-wrapper">
+            <!-- Botón Anterior -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentPage === 1"
+                (click)="previousPage()"
+                title="Página anterior">
+                ← Anterior
+            </button>
+            
+            <!-- Números de página -->
+            <div class="page-numbers">
+                <button 
+                    *ngFor="let page of pageNumbers" 
+                    class="page-number-btn"
+                    [class.active]="page === currentPage"
+                    (click)="goToPage(page)">
+                    {{ page }}
+                </button>
+            </div>
+            
+            <!-- Botón Siguiente -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentPage === totalPages"
+                (click)="nextPage()"
+                title="Página siguiente">
+                Siguiente →
+            </button>
+        </div>
+        
+        <!-- Información de página actual -->
+        <div class="pagination-summary">
+            <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        </div>
+    </div>
+
+    <!-- Mensaje cuando no hay noticias después de filtrar -->
+    <div *ngIf="allNotices.length === 0 && !error && !isLoading" class="no-notices">
+        <p>No hay noticias disponibles para la licencia seleccionada.</p>
+    </div>
+</div>

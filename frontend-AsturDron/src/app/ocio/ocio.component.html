@@ -1,0 +1,502 @@
+<div id="select">
+    <button [class.active]="activeSection === 'fotos'" (click)="setActiveSection('fotos')">Fotos</button>
+    <button [class.active]="activeSection === 'videos'" (click)="setActiveSection('videos')">Vídeos</button>
+    <button [class.active]="activeSection === 'ranking'" (click)="setActiveSection('ranking')">Ranking</button>
+    <button [class.active]="activeSection === 'anuncios'" (click)="setActiveSection('anuncios')">Anuncios</button>
+    <button *ngIf="activeSection === 'fotos'" class="publish-button" (click)="openUploadModal()">Publicar Foto</button>
+    <button *ngIf="activeSection === 'videos'" class="publish-button" (click)="openUploadModal()">Publicar Vídeo</button>
+    <button *ngIf="activeSection === 'ranking'" class="publish-button" (click)="toggleRankingView()">
+        {{ showAllRankings ? 'Ver Top 3' : 'Ver Ranking Completo' }}
+    </button>
+    <button *ngIf="activeSection === 'anuncios' && isUserLoggedIn()" class="publish-button" (click)="toggleCreateAnnouncementForm()">
+        {{ showCreateAnnouncementForm ? 'Cancelar' : 'Crear Anuncio' }}
+    </button>
+</div>
+
+<!-- Contenedor de mensajes -->
+<div class="messages-container">
+    <!-- Mensaje de éxito -->
+    <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+    </div>
+    
+    <!-- Mensaje de error si existe -->
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+</div>
+
+<!-- Sección de Fotos -->
+<div id="galeria" *ngIf="activeSection === 'fotos'">
+    <!-- Mensaje informativo para usuarios no logueados -->
+    <div *ngIf="!isUserLoggedIn()" class="login-required-message">
+        <p>🔒 Para ver las imágenes con claridad, debes <a [routerLink]="['/login']">iniciar sesión</a> o <a [routerLink]="['/register']">registrarte</a></p>
+    </div>
+
+    <!-- Información de paginación superior -->
+    <div *ngIf="allImages.length > 0" class="pagination-info">
+        <p>Mostrando {{ getImagePageInfo().startItem }} - {{ getImagePageInfo().endItem }} de {{ getImagePageInfo().totalItems }} imágenes</p>
+    </div>
+
+    <!-- Mensaje de carga -->
+    <div *ngIf="isLoadingImages" class="loading-message">
+        <p>⏳ Cargando imágenes...</p>
+    </div>
+
+    <!-- Mensaje cuando no hay imágenes y no está cargando -->
+    <div *ngIf="!isLoadingImages && allImages.length === 0 && !error" class="loading-message">
+        <p>📷 No hay imágenes publicadas aún</p>
+        <button (click)="loadImages()" class="retry-button">🔄 Recargar</button>
+    </div>
+
+    <!-- Galería de imágenes -->
+    <div class="galeria-container" *ngIf="images.length > 0">
+        <div class="imagen" *ngFor="let image of images; trackBy: trackByImageId">
+            <p>&#64;{{ image.username }}</p>
+            <img [src]="image.url" [alt]="'Imagen de ' + image.username" 
+                 [class.blurred]="!isUserLoggedIn()"
+                 (error)="onImageError($event, image)"
+                 (load)="onImageLoad($event, image)">
+        </div>
+    </div>
+
+    <!-- Controles de paginación para imágenes -->
+    <div *ngIf="totalImagePages > 1" class="pagination-controls">
+        <div class="pagination-wrapper">
+            <!-- Botón Anterior -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentImagePage === 1"
+                (click)="previousImagePage()"
+                title="Página anterior">
+                ← Anterior
+            </button>
+            
+            <!-- Números de página -->
+            <div class="page-numbers">
+                <button 
+                    *ngFor="let page of imagePageNumbers" 
+                    class="page-number-btn"
+                    [class.active]="page === currentImagePage"
+                    (click)="goToImagePage(page)">
+                    {{ page }}
+                </button>
+            </div>
+            
+            <!-- Botón Siguiente -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentImagePage === totalImagePages"
+                (click)="nextImagePage()"
+                title="Página siguiente">
+                Siguiente →
+            </button>
+        </div>
+        
+        <!-- Información de página actual -->
+        <div class="pagination-summary">
+            <span>Página {{ currentImagePage }} de {{ totalImagePages }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Videos -->
+<div id="videos" *ngIf="activeSection === 'videos'">
+    <!-- Mensaje informativo para usuarios no logueados -->
+    <div *ngIf="!isUserLoggedIn()" class="login-required-message">
+        <p>🔒 Para reproducir videos, debes <a [routerLink]="['/login']">iniciar sesión</a> o <a [routerLink]="['/register']">registrarte</a></p>
+    </div>
+
+    <!-- Información de paginación superior -->
+    <div *ngIf="allVideos.length > 0" class="pagination-info">
+        <p>Mostrando {{ getVideoPageInfo().startItem }} - {{ getVideoPageInfo().endItem }} de {{ getVideoPageInfo().totalItems }} videos</p>
+    </div>
+
+    <!-- Mensaje de carga -->
+    <div *ngIf="isLoadingVideos" class="loading-message">
+        <p>⏳ Cargando videos...</p>
+    </div>
+
+    <!-- Mensaje cuando no hay videos y no está cargando -->
+    <div *ngIf="!isLoadingVideos && allVideos.length === 0 && !error" class="loading-message">
+        <p>🎥 No hay videos publicados aún</p>
+    </div>
+
+    <!-- Galería de videos -->
+    <div class="videos-container" *ngIf="!isLoadingVideos && videos.length > 0">
+        <div class="video-item" *ngFor="let video of videos">
+            <div class="video-header">
+                <p class="username">&#64;{{ video.username }}</p>
+            </div>
+            <div class="video-thumbnail" (click)="openVideoModal(video.video)" [class.locked]="!isUserLoggedIn()">
+                <img [src]="video.miniature" alt="video thumbnail" [class.blurred]="!isUserLoggedIn()">
+                <div class="play-overlay" *ngIf="isUserLoggedIn()">
+                    <span class="play-icon">▶</span>
+                </div>
+                <div class="lock-overlay" *ngIf="!isUserLoggedIn()">
+                    <span class="lock-icon">🔒</span>
+                    <span class="lock-text">Inicia sesión para reproducir</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de paginación para videos -->
+    <div *ngIf="totalVideoPages > 1" class="pagination-controls">
+        <div class="pagination-wrapper">
+            <!-- Botón Anterior -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentVideoPage === 1"
+                (click)="previousVideoPage()"
+                title="Página anterior">
+                ← Anterior
+            </button>
+            
+            <!-- Números de página -->
+            <div class="page-numbers">
+                <button 
+                    *ngFor="let page of videoPageNumbers" 
+                    class="page-number-btn"
+                    [class.active]="page === currentVideoPage"
+                    (click)="goToVideoPage(page)">
+                    {{ page }}
+                </button>
+            </div>
+            
+            <!-- Botón Siguiente -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentVideoPage === totalVideoPages"
+                (click)="nextVideoPage()"
+                title="Página siguiente">
+                Siguiente →
+            </button>
+        </div>
+        
+        <!-- Información de página actual -->
+        <div class="pagination-summary">
+            <span>Página {{ currentVideoPage }} de {{ totalVideoPages }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Ranking -->
+<div id="ranking" *ngIf="activeSection === 'ranking'">
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <div class="ranking-header">
+        <h2>{{ showAllRankings ? 'Ranking Completo' : 'Top 3 Jugadores' }}</h2>
+        <p class="ranking-info">Clasificación de usuarios por puntuación</p>
+    </div>
+
+    <div *ngIf="rankings.length === 0" class="no-rankings">
+        No hay usuarios en el ranking todavía
+    </div>
+
+    <table class="ranking-table" *ngIf="rankings.length > 0">
+        <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Usuario</th>
+                <th>Puntuación</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let rank of rankings; let i = index" [class.top-3]="i < 3">
+                <td>
+                    <span class="position">{{ i + 1 }}</span>
+                    <span *ngIf="i < 3" class="medal">
+                        {{ i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉' }}
+                    </span>
+                </td>
+                <td>{{ rank.username }}</td>
+                <td>{{ rank.score }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Sección de Anuncios -->
+<div id="anuncios" *ngIf="activeSection === 'anuncios'">
+    <!-- Mensaje informativo para usuarios no logueados -->
+    <div *ngIf="!isUserLoggedIn()" class="login-required-message">
+        <p>🔒 Para crear anuncios, debes <a [routerLink]="['/login']">iniciar sesión</a> o <a [routerLink]="['/register']">registrarte</a></p>
+    </div>
+
+    <!-- Botón para crear anuncio -->
+    <div *ngIf="isUserLoggedIn() && !showCreateAnnouncementForm && !showEditAnnouncementForm" class="create-announcement-btn-container">
+        <button class="create-announcement-btn" (click)="toggleCreateAnnouncementForm()">
+            ➕ Crear Nuevo Anuncio
+        </button>
+    </div>
+
+    <!-- Formulario de crear anuncio -->
+    <div *ngIf="showCreateAnnouncementForm && isUserLoggedIn()" class="announcement-form-container">
+        <div class="announcement-form">
+            <h3>Crear Nuevo Anuncio</h3>
+            <form (ngSubmit)="createAnnouncement()">
+                <div class="form-group">
+                    <label for="newTitle">Título:</label>
+                    <input 
+                        type="text" 
+                        id="newTitle" 
+                        [(ngModel)]="newAnnouncement.title" 
+                        name="newTitle"
+                        placeholder="Título del anuncio"
+                        maxlength="100"
+                        required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newContent">Contenido:</label>
+                    <textarea 
+                        id="newContent" 
+                        [(ngModel)]="newAnnouncement.content" 
+                        name="newContent"
+                        placeholder="Escribe el contenido de tu anuncio..."
+                        rows="4"
+                        required></textarea>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button" (click)="toggleCreateAnnouncementForm()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-button" 
+                            [disabled]="!newAnnouncement.title.trim() || !newAnnouncement.content.trim()">
+                        Crear Anuncio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Formulario de editar anuncio -->
+    <div *ngIf="showEditAnnouncementForm" class="announcement-form-container">
+        <div class="announcement-form">
+            <h3>Editar Anuncio</h3>
+            <form (ngSubmit)="updateAnnouncement()">
+                <div class="form-group">
+                    <label for="editTitle">Título:</label>
+                    <input 
+                        type="text" 
+                        id="editTitle" 
+                        [(ngModel)]="editingAnnouncement.title" 
+                        name="editTitle"
+                        placeholder="Título del anuncio"
+                        maxlength="100"
+                        required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editContent">Contenido:</label>
+                    <textarea 
+                        id="editContent" 
+                        [(ngModel)]="editingAnnouncement.content" 
+                        name="editContent"
+                        placeholder="Escribe el contenido de tu anuncio..."
+                        rows="4"
+                        required></textarea>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="cancel-button" (click)="cancelEditAnnouncement()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="submit-button" 
+                            [disabled]="!editingAnnouncement.title.trim() || !editingAnnouncement.content.trim()">
+                        Actualizar Anuncio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Información de paginación superior -->
+    <div *ngIf="allAnnouncements.length > 0" class="pagination-info">
+        <p>Mostrando {{ getAnnouncementPageInfo().startItem }} - {{ getAnnouncementPageInfo().endItem }} de {{ getAnnouncementPageInfo().totalItems }} anuncios</p>
+    </div>
+
+    <!-- Mensaje de carga -->
+    <div *ngIf="isLoadingAnnouncements" class="loading-message">
+        <p>⏳ Cargando anuncios...</p>
+    </div>
+
+    <!-- Mensaje cuando no hay anuncios y no está cargando -->
+    <div *ngIf="!isLoadingAnnouncements && allAnnouncements.length === 0 && !error" class="loading-message">
+        <p>📢 No hay anuncios publicados aún</p>
+        <button *ngIf="isUserLoggedIn()" (click)="toggleCreateAnnouncementForm()" class="retry-button">
+            ➕ Crear el primer anuncio
+        </button>
+    </div>
+
+    <!-- Lista de anuncios -->
+    <div class="announcements-container" *ngIf="!isLoadingAnnouncements && allAnnouncements.length > 0">
+        <div class="announcement-item" *ngFor="let announcement of displayedAnnouncements">
+            <div class="announcement-header">
+                <div class="announcement-meta">
+                    <h4 class="announcement-title">{{ announcement.title }}</h4>
+                    <div class="announcement-info">
+                        <span class="announcement-author">Por: &#64;{{ announcement.username }}</span>
+                    </div>
+                </div>
+                
+                <!-- Botones de acción (solo para el autor o admin) -->
+                <div class="announcement-actions" *ngIf="canEditAnnouncement(announcement)">
+                    <button class="edit-btn" (click)="editAnnouncement(announcement)" title="Editar anuncio">
+                        ✏️
+                    </button>
+                    <button class="delete-btn" (click)="deleteAnnouncement(announcement)" title="Eliminar anuncio">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+            
+            <div class="announcement-content">
+                <p>{{ announcement.content }}</p>
+            </div>
+            
+            <!-- Sección de comentarios -->
+            <div class="comments-section">
+                <div class="comments-actions">
+                    <button class="comments-toggle-btn" (click)="toggleComments(announcement.id!)">
+                        {{ areCommentsVisible(announcement.id!) ? 'Ocultar comentarios' : 'Ver comentarios' }}
+                        ({{ getCommentCount(announcement) }})
+                    </button>
+                    <button *ngIf="isUserLoggedIn()" class="add-comment-btn" (click)="toggleCommentForm(announcement.id!)">
+                        {{ isCommentFormVisible(announcement.id!) ? 'Cancelar' : '💬 Comentar' }}
+                    </button>
+                </div>
+
+                <!-- Formulario de nuevo comentario -->
+                <div *ngIf="isCommentFormVisible(announcement.id!)" class="comment-form">
+                    <form (ngSubmit)="createComment(announcement.id!)">
+                        <div class="form-group">
+                            <textarea 
+                                [(ngModel)]="getNewCommentForm(announcement.id!).content"
+                                name="commentContent{{ announcement.id }}"
+                                placeholder="Escribe tu comentario..."
+                                rows="3"
+                                required></textarea>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="button" class="cancel-button" (click)="toggleCommentForm(announcement.id!)">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="submit-button" 
+                                    [disabled]="!getNewCommentForm(announcement.id!).content.trim()">
+                                Comentar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de comentarios -->
+                <div *ngIf="areCommentsVisible(announcement.id!)" class="comments-container">
+                    <div *ngIf="isLoadingComments" class="loading-message">
+                        <p>⏳ Cargando comentarios...</p>
+                    </div>
+
+                    <div *ngIf="!isLoadingComments && getCommentsForAnnouncement(announcement.id!).length === 0" class="no-comments">
+                        <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
+                    </div>
+
+                    <div class="comment-item" *ngFor="let comment of getCommentsForAnnouncement(announcement.id!)">
+                        <!-- Vista normal del comentario -->
+                        <div *ngIf="!isCommentBeingEdited(comment.id!)" class="comment-display">
+                            <div class="comment-header">
+                                <span class="comment-author">&#64;{{ comment.username }}</span>
+                                <div class="comment-actions" *ngIf="canEditComment(comment)">
+                                    <button class="edit-btn" (click)="editComment(comment)" title="Editar comentario">✏️</button>
+                                    <button class="delete-btn" (click)="deleteComment(comment)" title="Eliminar comentario">🗑️</button>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                <p>{{ comment.content }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Vista de edición del comentario -->
+                        <div *ngIf="isCommentBeingEdited(comment.id!)" class="comment-edit">
+                            <form (ngSubmit)="updateComment(comment.id!)">
+                                <div class="form-group">
+                                    <textarea 
+                                        [(ngModel)]="getEditingComment(comment.id!).content"
+                                        name="editCommentContent{{ comment.id }}"
+                                        rows="3"
+                                        required></textarea>
+                                </div>
+                                <div class="form-buttons">
+                                    <button type="button" class="cancel-button" (click)="cancelEditComment(comment.id!)">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" class="submit-button" 
+                                            [disabled]="!getEditingComment(comment.id!).content.trim()">
+                                        Actualizar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de paginación -->
+    <div *ngIf="totalAnnouncementPages > 1" class="pagination-controls">
+        <div class="pagination-wrapper">
+            <!-- Botón Anterior -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentAnnouncementPage === 1"
+                (click)="previousAnnouncementPage()"
+                title="Página anterior">
+                ← Anterior
+            </button>
+            
+            <!-- Números de página -->
+            <div class="page-numbers">
+                <button 
+                    *ngFor="let page of announcementPageNumbers" 
+                    class="page-number-btn"
+                    [class.active]="page === currentAnnouncementPage"
+                    (click)="goToAnnouncementPage(page)">
+                    {{ page }}
+                </button>
+            </div>
+            
+            <!-- Botón Siguiente -->
+            <button 
+                class="pagination-btn" 
+                [disabled]="currentAnnouncementPage === totalAnnouncementPages"
+                (click)="nextAnnouncementPage()"
+                title="Página siguiente">
+                Siguiente →
+            </button>
+        </div>
+        
+        <!-- Información de página actual -->
+        <div class="pagination-summary">
+            <span>Página {{ currentAnnouncementPage }} de {{ totalAnnouncementPages }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Upload -->
+<app-upload-modal 
+    *ngIf="showUploadModal"
+    [type]="activeSection === 'fotos' ? 'image' : 'video'"
+    (closeModal)="closeUploadModal()"
+    (uploadSuccess)="handleUploadSuccess()">
+</app-upload-modal>
+
+<!-- Modal de Video -->
+<app-video-modal 
+    *ngIf="selectedVideo" 
+    [videoUrl]="selectedVideo"
+    (closeModal)="closeVideoModal()">
+</app-video-modal>

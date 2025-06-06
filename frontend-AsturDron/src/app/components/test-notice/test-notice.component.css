@@ -1,0 +1,38 @@
+.test-notice-container {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.result {
+  margin: 20px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.buttons button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin: 10px 0;
+  margin-right: 10px;
+}
+
+.noticias-list {
+  margin-top: 20px;
+}
+
+.noticia-item {
+  border: 1px solid #ccc;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+} 

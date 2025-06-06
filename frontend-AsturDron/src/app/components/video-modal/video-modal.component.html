@@ -1,0 +1,8 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-button" (click)="close()">×</button>
+    <video controls [src]="videoUrl" autoplay>
+      Tu navegador no soporta el elemento de video.
+    </video>
+  </div>
+</div> 

@@ -1,0 +1,93 @@
+<div class="auth-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <button [class.active]="!isRegistering" (click)="isRegistering = false">Iniciar Sesión</button>
+      <button [class.active]="isRegistering" (click)="isRegistering = true">Registrarse</button>
+    </div>
+
+    <!-- Formulario de Login -->
+    <form *ngIf="!isRegistering" (ngSubmit)="onLogin()" class="auth-form">
+      <div class="form-group">
+        <label for="loginUsername">Usuario</label>
+        <input 
+          type="text" 
+          id="loginUsername"
+          [(ngModel)]="loginData.username"
+          name="username"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Contraseña</label>
+        <input 
+          type="password" 
+          id="loginPassword"
+          [(ngModel)]="loginData.password"
+          name="password"
+          required>
+      </div>
+
+      <button type="submit" [disabled]="!loginData.username || !loginData.password">
+        Iniciar Sesión
+      </button>
+
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+    </form>
+
+    <!-- Formulario de Registro -->
+    <form *ngIf="isRegistering" (ngSubmit)="onRegister()" class="auth-form">
+      <div class="form-group">
+        <label for="registerUsername">Usuario</label>
+        <input 
+          type="text" 
+          id="registerUsername"
+          [(ngModel)]="registerData.username"
+          name="username"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="registerEmail">Email</label>
+        <input 
+          type="email" 
+          id="registerEmail"
+          [(ngModel)]="registerData.userEmail"
+          name="email"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="registerPassword">Contraseña</label>
+        <input 
+          type="password" 
+          id="registerPassword"
+          [(ngModel)]="registerData.password"
+          name="password"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="registerLicense">Licencia</label>
+        <select 
+          id="registerLicense"
+          [(ngModel)]="registerData.license"
+          name="license"
+          required>
+          <option value="a1">A1</option>
+          <option value="a2">A2</option>
+          <option value="a3">A3</option>
+        </select>
+      </div>
+
+      <button type="submit" [disabled]="!isRegisterFormValid()">
+        Registrarse
+      </button>
+
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+    </form>
+  </div>
+</div> 

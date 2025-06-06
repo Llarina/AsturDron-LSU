@@ -1,0 +1,24 @@
+<div class="test-notice-container">
+  <h1>Test Frontend - Crear Noticia con License</h1>
+  
+  <div class="buttons">
+    <button (click)="crearNoticia()">Crear Noticia (Con License)</button>
+    <button (click)="verificarNoticias()">Ver Noticias</button>
+  </div>
+
+  <div class="resultado">
+    <div *ngIf="showSuccess" class="result success">{{resultado}}</div>
+    <div *ngIf="showError" class="result error">{{resultado}}</div>
+  </div>
+
+  <div class="noticias-list" *ngIf="noticias.length > 0">
+    <h3>📰 Noticias en MySQL ({{ noticias.length }} total):</h3>
+    <div *ngFor="let noticia of noticias" class="noticia-item">
+      <strong>ID:</strong> {{ noticia.id }}<br>
+      <strong>Título:</strong> {{ noticia.titular }}<br>
+      <strong>Año:</strong> {{ noticia.dateYear }}<br>
+      <strong>License:</strong> {{ noticia.license || 'null' }}<br>
+      <strong>Username:</strong> {{ noticia.username || 'null' }}
+    </div>
+  </div>
+</div> 

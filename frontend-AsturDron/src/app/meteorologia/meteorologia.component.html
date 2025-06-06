@@ -1,0 +1,24 @@
+<div id="meteorologia">
+    <!-- Mensajes de error y advertencia -->
+    <div class="messages-container">
+        <div *ngIf="error" class="error-message">
+            {{ error }}
+        </div>
+
+        <div *ngIf="warningMessage" class="warning-message">
+            {{ warningMessage }}
+        </div>
+    </div>
+
+    <!-- Tarjetas del tiempo -->
+    <div class="weather-cards">
+        <div class="dia" *ngFor="let i of [0,1,2,3]">
+            <div class="day-header">
+                <h3>{{ getDayInfo(i).dayName }}</h3>
+                <span class="day-number">{{ getDayInfo(i).dayNumber }}</span>
+            </div>
+            <i [class]="getWeatherIcon(weatherDays[i]?.weather)"></i>
+            <p class="weather-type">{{ weatherDays[i]?.weather || 'Pendiente' }}</p>
+        </div>
+    </div>
+</div>
