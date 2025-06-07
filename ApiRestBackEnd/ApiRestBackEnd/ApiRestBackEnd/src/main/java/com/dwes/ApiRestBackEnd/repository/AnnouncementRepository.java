@@ -9,9 +9,12 @@ import java.util.List;
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
     
-    @Query("SELECT DISTINCT a FROM Announcement a LEFT JOIN FETCH a.comments ORDER BY a.createdAt DESC")
+    @Query("SELECT a FROM Announcement a WHERE a.user IS NOT NULL ORDER BY a.createdAt DESC")
     List<Announcement> findAllOrderByCreatedAtDesc();
     
-    @Query("SELECT DISTINCT a FROM Announcement a LEFT JOIN FETCH a.comments WHERE a.user.username = :username ORDER BY a.createdAt DESC")
+    @Query("SELECT a FROM Announcement a WHERE a.user.username = :username ORDER BY a.createdAt DESC")
     List<Announcement> findByUsernameOrderByCreatedAtDesc(String username);
+    
+    @Query("SELECT a FROM Announcement a WHERE a.user IS NULL")
+    List<Announcement> findOrphanedAnnouncements();
 } 

@@ -600,6 +600,28 @@ export class OcioComponent implements OnInit {
     this.successMessage = '';
   }
 
+  /**
+   * Extrae el mensaje de error de una respuesta HTTP de forma consistente
+   */
+  private extractErrorMessage(err: any): string {
+    if (err.error) {
+      // Si el error viene del backend con nuestro formato ErrorResponseDTO
+      if (typeof err.error === 'object' && err.error.message) {
+        return err.error.message;
+      } 
+      // Si el error es un string (respuesta de texto plano)
+      else if (typeof err.error === 'string') {
+        return err.error;
+      }
+    } 
+    // Si no hay err.error, usar el mensaje del error HTTP
+    else if (err.message) {
+      return err.message;
+    }
+    
+    return 'Error desconocido';
+  }
+
   // === MÉTODOS DE OPTIMIZACIÓN ===
 
   /**
@@ -864,7 +886,7 @@ export class OcioComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error deleting announcement:', err);
-          this.error = 'Error al eliminar el anuncio: ' + (err.error?.message || err.message || 'Error desconocido');
+          this.error = 'Error al eliminar el anuncio: ' + this.extractErrorMessage(err);
         }
       });
     }

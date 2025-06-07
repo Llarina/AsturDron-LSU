@@ -27,10 +27,28 @@ public class AnnouncementService {
     }
 
     public List<AnnouncementResponseDTO> getAllAnnouncements() {
-        List<Announcement> announcements = announcementRepository.findAllOrderByCreatedAtDesc();
-        return announcements.stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+        try {
+            List<Announcement> announcements = announcementRepository.findAllOrderByCreatedAtDesc();
+            return announcements.stream()
+                    .map(this::mapToResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al consultar los anuncios en la base de datos: " + e.getMessage(), e);
+        }
+    }
+    
+    public int cleanOrphanedAnnouncements() {
+        try {
+            List<Announcement> orphanedAnnouncements = announcementRepository.findOrphanedAnnouncements();
+            if (!orphanedAnnouncements.isEmpty()) {
+                announcementRepository.deleteAll(orphanedAnnouncements);
+                System.out.println("Eliminados " + orphanedAnnouncements.size() + " anuncios huérfanos");
+                return orphanedAnnouncements.size();
+            }
+            return 0;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al limpiar anuncios huérfanos: " + e.getMessage(), e);
+        }
     }
 
     public List<AnnouncementResponseDTO> getAnnouncementsByUsername(String username) {
@@ -88,14 +106,38 @@ public class AnnouncementService {
     }
 
     private AnnouncementResponseDTO mapToResponseDTO(Announcement announcement) {
-        return AnnouncementResponseDTO.builder()
-                .id(announcement.getId())
-                .title(announcement.getTitle())
-                .content(announcement.getContent())
-                .username(announcement.getUser().getUsername())
-                .createdAt(announcement.getCreatedAt())
-                .updatedAt(announcement.getUpdatedAt())
-                .commentCount(announcement.getComments() != null ? (long) announcement.getComments().size() : 0L)
-                .build();
+        try {
+            // Cargar el usuario de forma explícita para evitar problemas de lazy loading
+            User user = userRepository.findById(announcement.getUser().getId())
+                    .orElse(null);
+            
+            String username = "Unknown";
+            if (user != null) {
+                username = user.getUsername();
+            }
+            
+            // Para el conteo de comentarios, usamos una consulta directa si es necesario
+            long commentCount = 0L;
+            try {
+                if (announcement.getComments() != null) {
+                    commentCount = (long) announcement.getComments().size();
+                }
+            } catch (Exception ex) {
+                // Si falla obtener los comentarios, usamos 0 por defecto
+                commentCount = 0L;
+            }
+            
+            return AnnouncementResponseDTO.builder()
+                    .id(announcement.getId())
+                    .title(announcement.getTitle())
+                    .content(announcement.getContent())
+                    .username(username)
+                    .createdAt(announcement.getCreatedAt())
+                    .updatedAt(announcement.getUpdatedAt())
+                    .commentCount(commentCount)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al mapear el anuncio con ID " + announcement.getId() + ": " + e.getMessage(), e);
+        }
     }
 } 
